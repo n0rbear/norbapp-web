@@ -1,50 +1,34 @@
 import Image from "next/image";
+import { contact, ketoMentorConfig, languages, localizedPath, resolveLanguage, translations } from "./i18n";
 
-const projects = [
-  {
-    name: "Keto Companion",
-    category: "Nutrition App",
-    description:
-      "Keto-first Ernährungs- und Lifestyle-App für Lebensmittel, Makros und alltagstaugliche Entscheidungen.",
-    status: "In Entwicklung",
-    features: ["Makro-Tracking", "Keto-Check", "AI Food Photo"],
-    icon: "K",
-  },
-  {
-    name: "Fuel & Route",
-    category: "Route Cost App",
-    description:
-      "Europäische Kraftstoff- und Routenkostenplanung für klare Vergleiche vor der Fahrt.",
-    status: "In Entwicklung",
-    features: ["Routenkosten", "Preisvergleich", "Tankstopps"],
-    icon: "F",
-  },
-  {
-    name: "NDP",
-    category: "Norb Diagnostic Platform",
-    description:
-      "Entwicklerplattform für App-Diagnostik, Monitoring, Deploy-Status und technische Ereignisse.",
-    status: "In Entwicklung",
-    features: ["App-Diagnostik", "API-Fehler", "Deploy-Monitoring"],
-    icon: "D",
-  },
-];
+type HomeProps = {
+  searchParams?: Promise<{ lang?: string | string[] }>;
+};
 
-const statuses = ["Konzept", "In Entwicklung", "Beta", "Early Access", "Veroffentlicht"];
+export default async function Home({ searchParams }: HomeProps) {
+  const params = await searchParams;
+  const lang = resolveLanguage(params?.lang);
+  const t = translations[lang];
 
-export default function Home() {
   return (
     <main>
       <header className="siteHeader">
-        <nav className="nav shell" aria-label="Hauptnavigation">
-          <a className="brand" href="#top" aria-label="NorbApp Startseite">
+        <nav className="nav shell" aria-label="Main navigation">
+          <a className="brand" href={`/?lang=${lang}#top`} aria-label="NorbApp">
             <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} priority />
             <span>NorbApp</span>
           </a>
           <div className="navLinks">
-            <a href="#projects">Projekte</a>
-            <a href="#about">NorbApp</a>
-            <a href="#contact">Kontakt</a>
+            <a href={`/?lang=${lang}#projects`}>{t.nav.projects}</a>
+            <a href={`/?lang=${lang}#about`}>{t.nav.about}</a>
+            <a href={`/?lang=${lang}#contact`}>{t.nav.contact}</a>
+          </div>
+          <div className="languageSwitch" aria-label="Language switcher">
+            {languages.map((item) => (
+              <a className={item === lang ? "activeLanguage" : ""} href={localizedPath("/", item)} key={item} hrefLang={item}>
+                {item.toUpperCase()}
+              </a>
+            ))}
           </div>
         </nav>
       </header>
@@ -52,28 +36,25 @@ export default function Home() {
       <section id="top" className="hero shell">
         <div className="heroGrid">
           <div>
-            <p className="eyebrow">Software / Apps / AI</p>
+            <p className="eyebrow">{t.hero.eyebrow}</p>
             <h1>
-              NorbApp
-              <span>Digitale Lösungen für echte Probleme.</span>
+              {t.hero.title}
+              <span>{t.hero.subtitle}</span>
             </h1>
-            <p className="heroCopy">
-              NorbApp entwickelt eigene Web- und Mobile-Apps: praktische Werkzeuge für Alltag,
-              Mobilität, Automatisierung und moderne AI-gestützte Workflows.
-            </p>
+            <p className="heroCopy">{t.hero.copy}</p>
             <div className="heroActions">
-              <a className="button primary" href="#projects">Projekte ansehen</a>
-              <a className="button secondary" href="#contact">Kontakt</a>
+              <a className="button primary" href={`/?lang=${lang}#projects`}>{t.hero.projectsCta}</a>
+              <a className="button secondary" href={`/?lang=${lang}#contact`}>{t.hero.contactCta}</a>
             </div>
           </div>
-          <div className="heroCard" aria-label="NorbApp visuelle Vorschau">
+          <div className="heroCard" aria-label="NorbApp visual preview">
             <div className="heroLogoFrame">
               <Image src="/norbapp-logo.png" alt="NorbApp Logo" width={220} height={220} priority />
             </div>
             <div>
-              <span className="panelBadge">NORBAPP STUDIO</span>
-              <strong>Praktisch bauen. Klar bleiben.</strong>
-              <small>Web · Mobile · Automation · AI</small>
+              <span className="panelBadge">{t.hero.panelBadge}</span>
+              <strong>{t.hero.panelTitle}</strong>
+              <small>{t.hero.panelMeta}</small>
             </div>
           </div>
         </div>
@@ -82,78 +63,77 @@ export default function Home() {
       <section id="projects" className="section shell">
         <div className="sectionHead">
           <div>
-            <span className="kicker">Projekte / In Entwicklung</span>
-            <h2>Eigene Apps mit konkretem Nutzen.</h2>
+            <span className="kicker">{t.projects.kicker}</span>
+            <h2>{t.projects.title}</h2>
           </div>
-          <p>
-            Die Projektstruktur ist bewusst datenbasiert angelegt, damit später URLs,
-            Screenshots, Stores, Status und Detailseiten sauber ergänzt werden können.
-          </p>
+          <p>{t.projects.copy}</p>
         </div>
         <div className="cards">
-          {projects.map((project, index) => (
-            <article className="card" key={project.name}>
-              <div className="cardTop">
-                <span className="appIcon">{project.icon}</span>
-                <span className="status"><span />{project.status}</span>
-              </div>
-              <p className="cardIndex">0{index + 1} / {project.category}</p>
-              <h3>{project.name}</h3>
-              <p>{project.description}</p>
-              <ul className="featureList">
-                {project.features.map((feature) => <li key={feature}>{feature}</li>)}
-              </ul>
-            </article>
-          ))}
+          {t.projects.items.map((project, index) => {
+            const isKetoMentor = project.name === "KetoMentor";
+            const projectHref = isKetoMentor
+              ? localizedPath(ketoMentorConfig.canonicalPath, lang)
+              : null;
+
+            return (
+              <article className="card" key={project.name}>
+                <div className="cardTop">
+                  <span className="appIcon">{project.name[0]}</span>
+                  <span className="status"><span />{project.status}</span>
+                </div>
+                <p className="cardIndex">0{index + 1} / {project.category}</p>
+                <h3>{project.name}</h3>
+                <p>{project.description}</p>
+                <ul className="featureList">
+                  {project.features.map((feature) => <li key={feature}>{feature}</li>)}
+                </ul>
+                {projectHref ? (
+                  <a className="projectLink" href={projectHref}>
+                    {ketoMentorConfig.publicAppUrl ? t.projects.openProject : t.projects.unavailable}
+                  </a>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
-        <div className="statusBar" aria-label="Mögliche Projektstatus">
-          {statuses.map((status) => (
-            <span className={status === "In Entwicklung" ? "activeStatus" : ""} key={status}>{status}</span>
+        <div className="statusBar" aria-label={t.projects.statusLabel}>
+          {t.projects.statuses.map((status) => (
+            <span className={status.includes("Test") || status.includes("Teszt") ? "activeStatus" : ""} key={status}>{status}</span>
           ))}
         </div>
       </section>
 
       <section id="about" className="section shell about">
         <div>
-          <span className="kicker">Über NorbApp</span>
-          <h2>Ein wachsendes App-Studio mit praktischem Fokus.</h2>
+          <span className="kicker">{t.about.kicker}</span>
+          <h2>{t.about.title}</h2>
         </div>
         <div className="aboutCopy">
-          <p>
-            NorbApp entwickelt eigene Anwendungen und digitale Lösungen, die reale Abläufe
-            einfacher machen sollen. Der Schwerpunkt liegt auf Web, Mobile, Automatisierung
-            und sinnvoll eingesetzter AI.
-          </p>
-          <p>
-            Statt großer Versprechen zählt ein klarer Produktgedanke: schlanke Oberflächen,
-            verständliche Funktionen und kontinuierliche Weiterentwicklung.
-          </p>
+          <p>{t.about.p1}</p>
+          <p>{t.about.p2}</p>
         </div>
       </section>
 
       <section id="contact" className="section shell contact">
         <div>
-          <span className="kicker">Kontakt</span>
-          <h2>Direkt erreichbar.</h2>
-          <p>
-            Fur Fragen zu NorbApp und den aktuellen Projekten erreichst du NorbApp per
-            E-Mail oder Telegram.
-          </p>
+          <span className="kicker">{t.contactSection.kicker}</span>
+          <h2>{t.contactSection.title}</h2>
+          <p>{t.contactSection.copy}</p>
           <div className="contactActions">
-            <a className="button primary" href="mailto:norbert@norbapp.com">norbert@norbapp.com</a>
-            <a className="button secondary" href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">@norbapp</a>
+            <a className="button primary" href={`mailto:${contact.email}`}>{contact.email}</a>
+            <a className="button secondary" href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramLabel}</a>
           </div>
         </div>
         <div className="qrCard">
           <Image
             src="/telegram-qr.svg"
-            alt="Telegram QR-Code für https://t.me/norbapp"
+            alt="Telegram QR-Code for https://t.me/norbapp"
             width={220}
             height={220}
             loading="eager"
           />
-          <strong>Auf Telegram kontaktieren</strong>
-          <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">https://t.me/norbapp</a>
+          <strong>{t.contactSection.telegramCaption}</strong>
+          <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramUrl}</a>
         </div>
       </section>
 
@@ -164,10 +144,10 @@ export default function Home() {
             <span>NorbApp</span>
           </div>
           <p>© {new Date().getFullYear()} NorbApp</p>
-          <a href="mailto:norbert@norbapp.com">norbert@norbapp.com</a>
-          <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">Telegram @norbapp</a>
-          <a href="/impressum">Impressum</a>
-          <a href="/datenschutz">Datenschutz</a>
+          <a href={`mailto:${contact.email}`}>{contact.email}</a>
+          <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">Telegram {contact.telegramLabel}</a>
+          <a href={localizedPath("/impressum", lang)}>{t.footer.impressum}</a>
+          <a href={localizedPath("/datenschutz", lang)}>{t.footer.privacy}</a>
         </div>
       </footer>
     </main>

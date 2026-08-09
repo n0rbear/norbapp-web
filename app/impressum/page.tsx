@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Image from "next/image";
+import { contact, languages, localizedPath, resolveLanguage, translations } from "../i18n";
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -7,26 +8,40 @@ export const metadata: Metadata = {
   alternates: { canonical: "/impressum" },
 };
 
-export default function ImpressumPage() {
+type LegalProps = {
+  searchParams?: Promise<{ lang?: string | string[] }>;
+};
+
+export default async function ImpressumPage({ searchParams }: LegalProps) {
+  const params = await searchParams;
+  const lang = resolveLanguage(params?.lang);
+  const t = translations[lang];
+
   return (
     <main className="shell legalPage">
-      <Link className="brand" href="/">
-        <span className="brandMark">N</span>
-        <span>NorbApp</span>
-      </Link>
-      <h1>Impressum</h1>
+      <div className="legalTop">
+        <a className="brand" href={localizedPath("/", lang)}>
+          <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} priority />
+          <span>{t.legal.back}</span>
+        </a>
+        <div className="languageSwitch" aria-label="Language switcher">
+          {languages.map((item) => (
+            <a className={item === lang ? "activeLanguage" : ""} href={localizedPath("/impressum", item)} key={item} hrefLang={item}>
+              {item.toUpperCase()}
+            </a>
+          ))}
+        </div>
+      </div>
+      <h1>{t.legal.impressumTitle}</h1>
       <div className="legalCard">
-        <h2>Angaben gemäß aktueller Freigabe</h2>
+        <h2>{t.legal.approvedData}</h2>
         <p><strong>NorbApp</strong></p>
         <p>
-          E-Mail: <a href="mailto:norbert@norbapp.com">norbert@norbapp.com</a><br />
-          Telegram: <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">@norbapp</a>
+          E-mail: <a href={`mailto:${contact.email}`}>{contact.email}</a><br />
+          Telegram: <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramLabel}</a>
         </p>
-        <h2>Hinweis</h2>
-        <p>
-          Diese Seite enthält aktuell nur die vom Betreiber freigegebenen Kontaktinformationen.
-          Weitere Pflichtangaben müssen vor einem kommerziellen Launch geprüft und ergänzt werden.
-        </p>
+        <h2>{t.legal.noteTitle}</h2>
+        <p>{t.legal.impressumNote}</p>
       </div>
     </main>
   );

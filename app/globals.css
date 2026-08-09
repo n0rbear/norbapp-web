@@ -68,6 +68,25 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-
 
 .navLinks { display: flex; align-items: center; gap: 24px; color: var(--ink-2); font-size: 14px; font-weight: 750; }
 .navLinks a:hover { color: var(--brand-dark); }
+.languageSwitch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255,255,255,.72);
+}
+.languageSwitch a {
+  min-width: 38px;
+  border-radius: 999px;
+  padding: 7px 9px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+.languageSwitch .activeLanguage { color: white; background: linear-gradient(135deg, var(--brand), var(--cyan)); }
 
 .hero { padding: 72px 0 48px; }
 .heroGrid { display: grid; grid-template-columns: 1.06fr .94fr; align-items: center; gap: 52px; }
@@ -185,6 +204,18 @@ h2 { margin: 10px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.04; let
   font-size: 12px;
   font-weight: 800;
 }
+.projectLink {
+  margin-top: 18px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: white;
+  background: linear-gradient(135deg, var(--brand), var(--cyan));
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 10px 22px rgba(4,174,176,.18);
+}
+.projectLink:hover { transform: translateY(-2px); }
 .statusBar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .statusBar .activeStatus { color: white; border-color: transparent; background: linear-gradient(135deg, var(--brand), var(--cyan)); }
 
@@ -215,11 +246,14 @@ h2 { margin: 10px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.04; let
 .qrCard a { margin-top: 6px; color: var(--brand-dark); font-size: 13px; font-weight: 800; }
 
 .legalPage { padding: 70px 0; max-width: 860px; }
+.legalTop { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .legalPage h1 { font-size: clamp(38px, 6vw, 64px); }
 .legalCard { background: white; border: 1px solid var(--border); border-radius: 18px; padding: 28px; box-shadow: var(--shadow-sm); }
 .legalCard h2 { font-size: 28px; margin-top: 30px; }
 .legalCard p, .legalCard li { color: var(--muted); }
 .legalCard a { color: var(--brand-dark); font-weight: 800; }
+.legalCard .button { margin-top: 12px; color: white; }
+.disabledButton { color: var(--muted) !important; background: #eef6f7; border: 1px solid var(--border); cursor: not-allowed; }
 
 .footer { margin-top: 64px; background: var(--surface-dark); color: white; padding: 34px 0; }
 .footerGrid { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
@@ -239,12 +273,14 @@ h2 { margin: 10px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.04; let
 
 @media (max-width: 620px) {
   .shell { width: min(100% - 28px, 1180px); }
-  .nav { min-height: 72px; }
+  .nav { min-height: 72px; flex-wrap: wrap; padding: 12px 0; }
   .navLinks { gap: 12px; font-size: 13px; }
   .navLinks a:nth-child(2) { display: none; }
+  .languageSwitch { order: 3; width: 100%; justify-content: center; }
   .hero { padding-top: 46px; }
   .heroCard { min-height: 320px; padding: 22px; border-radius: 22px; }
   .button, .heroActions a, .contactActions a { width: 100%; }
   .contact { padding: 28px 18px; border-radius: 22px; }
   .legalCard { padding: 20px; }
+  .legalTop { align-items: flex-start; flex-direction: column; }
 }

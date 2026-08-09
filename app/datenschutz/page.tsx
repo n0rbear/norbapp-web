@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Image from "next/image";
+import { contact, languages, localizedPath, resolveLanguage, translations } from "../i18n";
 
 export const metadata: Metadata = {
   title: "Datenschutz",
@@ -7,56 +8,54 @@ export const metadata: Metadata = {
   alternates: { canonical: "/datenschutz" },
 };
 
-export default function DatenschutzPage() {
+type LegalProps = {
+  searchParams?: Promise<{ lang?: string | string[] }>;
+};
+
+export default async function DatenschutzPage({ searchParams }: LegalProps) {
+  const params = await searchParams;
+  const lang = resolveLanguage(params?.lang);
+  const t = translations[lang];
+
   return (
     <main className="shell legalPage">
-      <Link className="brand" href="/">
-        <span className="brandMark">N</span>
-        <span>NorbApp</span>
-      </Link>
-      <h1>Datenschutz</h1>
+      <div className="legalTop">
+        <a className="brand" href={localizedPath("/", lang)}>
+          <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} priority />
+          <span>{t.legal.back}</span>
+        </a>
+        <div className="languageSwitch" aria-label="Language switcher">
+          {languages.map((item) => (
+            <a className={item === lang ? "activeLanguage" : ""} href={localizedPath("/datenschutz", item)} key={item} hrefLang={item}>
+              {item.toUpperCase()}
+            </a>
+          ))}
+        </div>
+      </div>
+      <h1>{t.legal.privacyTitle}</h1>
       <div className="legalCard">
-        <h2>Kurzüberblick</h2>
+        <h2>{t.legal.privacyIntroTitle}</h2>
+        <p>{t.legal.privacyIntro}</p>
+
+        <h2>{t.legal.hostingTitle}</h2>
+        <p>{t.legal.hosting}</p>
+
+        <h2>{t.legal.cookiesTitle}</h2>
+        <p>{t.legal.cookies}</p>
+
+        <h2>{t.legal.assetsTitle}</h2>
+        <p>{t.legal.assets}</p>
+
+        <h2>{t.legal.externalContactTitle}</h2>
         <p>
-          Diese Website ist als statische Informationsseite umgesetzt. Sie enthält keine
-          Kontaktformulare, kein Analytics, kein Tracking, keine Marketing-Cookies und keine
-          eingebetteten Inhalte von Drittanbietern.
+          {t.legal.externalContact}{" "}
+          <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramUrl}</a>
         </p>
 
-        <h2>Hosting und Serverlogs</h2>
+        <h2>{t.legal.contactTitle}</h2>
         <p>
-          Die Website wird über Render bereitgestellt. Beim Aufruf einer Website können technisch
-          notwendige Zugriffsdaten entstehen, zum Beispiel IP-Adresse, Datum und Uhrzeit des Abrufs,
-          angefragte URL, Browserinformationen und technische Statusdaten. Diese Daten können für
-          Betrieb, Sicherheit und Fehleranalyse verarbeitet werden.
-        </p>
-
-        <h2>Cookies, Local Storage und Tracking</h2>
-        <p>
-          Die Website setzt nach aktuellem Stand keine Cookies, nutzt keinen localStorage oder
-          sessionStorage und lädt keine Analyse- oder Marketing-Skripte. Deshalb wird kein
-          Cookie-Consent-Banner angezeigt.
-        </p>
-
-        <h2>Schriftarten und Assets</h2>
-        <p>
-          Es werden Systemschriftarten und lokale Assets verwendet. Externe Google Fonts oder
-          externe CDN-Dateien werden nicht eingebunden.
-        </p>
-
-        <h2>Kontakt per E-Mail oder Telegram</h2>
-        <p>
-          Wenn du per E-Mail oder Telegram Kontakt aufnimmst, werden die von dir übermittelten
-          Daten beim jeweiligen Anbieter und beim Empfänger verarbeitet. Der Telegram-Link und der
-          QR-Code führen zu <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">https://t.me/norbapp</a>.
-          Der QR-Code ist als lokale Grafik eingebunden und ruft beim Anzeigen keinen externen
-          QR-Dienst auf.
-        </p>
-
-        <h2>Kontakt</h2>
-        <p>
-          E-Mail: <a href="mailto:norbert@norbapp.com">norbert@norbapp.com</a><br />
-          Telegram: <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">@norbapp</a>
+          E-mail: <a href={`mailto:${contact.email}`}>{contact.email}</a><br />
+          Telegram: <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramLabel}</a>
         </p>
       </div>
     </main>
