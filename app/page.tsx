@@ -1,106 +1,169 @@
-const products = [
+import Image from "next/image";
+
+const projects = [
   {
-    name: "LogiHERO",
-    tag: "Logistics",
+    name: "Keto Companion",
+    category: "Nutrition App",
     description:
-      "A driver-first logistics workspace for tours, stops, work time and dispatch workflows.",
-    status: "In development",
+      "Keto-first Ernährungs- und Lifestyle-App für Lebensmittel, Makros und alltagstaugliche Entscheidungen.",
+    status: "In Entwicklung",
+    features: ["Makro-Tracking", "Keto-Check", "AI Food Photo"],
+    icon: "K",
   },
   {
     name: "Fuel & Route",
-    tag: "Mobility",
+    category: "Route Cost App",
     description:
-      "Route-aware fuel cost planning with practical price comparisons across Europe.",
-    status: "Coming soon",
+      "Europäische Kraftstoff- und Routenkostenplanung für klare Vergleiche vor der Fahrt.",
+    status: "In Entwicklung",
+    features: ["Routenkosten", "Preisvergleich", "Tankstopps"],
+    icon: "F",
   },
   {
-    name: "Keto Companion",
-    tag: "Lifestyle",
+    name: "NDP",
+    category: "Norb Diagnostic Platform",
     description:
-      "A keto-focused food tracker with simple guidance and AI-assisted food analysis.",
-    status: "Coming soon",
+      "Entwicklerplattform für App-Diagnostik, Monitoring, Deploy-Status und technische Ereignisse.",
+    status: "In Entwicklung",
+    features: ["App-Diagnostik", "API-Fehler", "Deploy-Monitoring"],
+    icon: "D",
   },
 ];
+
+const statuses = ["Konzept", "In Entwicklung", "Beta", "Early Access", "Veroffentlicht"];
 
 export default function Home() {
   return (
     <main>
-      <nav className="nav shell">
-        <a className="brand" href="#top" aria-label="NorbApp home">
-          <span className="brandMark">N</span>
-          <span>NorbApp</span>
-        </a>
-        <div className="navLinks">
-          <a href="#products">Products</a>
-          <a href="#about">About</a>
-          <a className="navCta" href="mailto:hello@norbapp.com">Contact</a>
-        </div>
-      </nav>
+      <header className="siteHeader">
+        <nav className="nav shell" aria-label="Hauptnavigation">
+          <a className="brand" href="#top" aria-label="NorbApp Startseite">
+            <span className="brandMark">N</span>
+            <span>NorbApp</span>
+          </a>
+          <div className="navLinks">
+            <a href="#projects">Projekte</a>
+            <a href="#about">NorbApp</a>
+            <a href="#contact">Kontakt</a>
+          </div>
+        </nav>
+      </header>
 
       <section id="top" className="hero shell">
-        <div className="eyebrow">Independent software studio</div>
-        <h1>Apps that solve <span>real problems.</span></h1>
-        <p className="heroCopy">
-          NorbApp creates focused software for everyday work, mobility and life — practical by design, fast to use and built around real workflows.
-        </p>
-        <div className="heroActions">
-          <a className="button primary" href="#products">Explore products</a>
-          <a className="button secondary" href="mailto:hello@norbapp.com">Get in touch</a>
-        </div>
-        <div className="heroPanel" aria-hidden="true">
-          <div className="orb orbOne" />
-          <div className="orb orbTwo" />
-          <div className="gridFade" />
-          <div className="panelContent">
-            <span className="panelBadge">NORBAPP / 2026</span>
-            <strong>Build useful.<br />Keep it simple.</strong>
-            <small>Web · Android · AI workflows</small>
+        <div className="heroGrid">
+          <div>
+            <p className="eyebrow">Software / Apps / AI</p>
+            <h1>
+              NorbApp
+              <span>Digitale Lösungen für echte Probleme.</span>
+            </h1>
+            <p className="heroCopy">
+              NorbApp entwickelt eigene Web- und Mobile-Apps: praktische Werkzeuge für Alltag,
+              Mobilität, Automatisierung und moderne AI-gestützte Workflows.
+            </p>
+            <div className="heroActions">
+              <a className="button primary" href="#projects">Projekte ansehen</a>
+              <a className="button secondary" href="#contact">Kontakt</a>
+            </div>
+          </div>
+          <div className="heroCard" aria-label="NorbApp visuelle Vorschau">
+            <div className="heroMark">N</div>
+            <div>
+              <span className="panelBadge">NORBAPP STUDIO</span>
+              <strong>Praktisch bauen. Klar bleiben.</strong>
+              <small>Web · Mobile · Automation · AI</small>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="products" className="section shell">
+      <section id="projects" className="section shell">
         <div className="sectionHead">
           <div>
-            <span className="kicker">Products</span>
-            <h2>Small tools. Big usefulness.</h2>
+            <span className="kicker">Projekte / In Entwicklung</span>
+            <h2>Eigene Apps mit konkretem Nutzen.</h2>
           </div>
-          <p>Focused products designed around concrete needs instead of feature overload.</p>
+          <p>
+            Die Projektstruktur ist bewusst datenbasiert angelegt, damit später URLs,
+            Screenshots, Stores, Status und Detailseiten sauber ergänzt werden können.
+          </p>
         </div>
         <div className="cards">
-          {products.map((product, index) => (
-            <article className="card" key={product.name}>
+          {projects.map((project, index) => (
+            <article className="card" key={project.name}>
               <div className="cardTop">
-                <span className="cardIndex">0{index + 1}</span>
-                <span className="tag">{product.tag}</span>
+                <span className="appIcon">{project.icon}</span>
+                <span className="status"><span />{project.status}</span>
               </div>
-              <h3>{product.name}</h3>
-              <p>{product.description}</p>
-              <div className="status"><span />{product.status}</div>
+              <p className="cardIndex">0{index + 1} / {project.category}</p>
+              <h3>{project.name}</h3>
+              <p>{project.description}</p>
+              <ul className="featureList">
+                {project.features.map((feature) => <li key={feature}>{feature}</li>)}
+              </ul>
             </article>
+          ))}
+        </div>
+        <div className="statusBar" aria-label="Mögliche Projektstatus">
+          {statuses.map((status) => (
+            <span className={status === "In Entwicklung" ? "activeStatus" : ""} key={status}>{status}</span>
           ))}
         </div>
       </section>
 
       <section id="about" className="section shell about">
         <div>
-          <span className="kicker">About NorbApp</span>
-          <h2>Software with a practical point of view.</h2>
+          <span className="kicker">Über NorbApp</span>
+          <h2>Ein wachsendes App-Studio mit praktischem Fokus.</h2>
         </div>
         <div className="aboutCopy">
           <p>
-            NorbApp is an independent app studio focused on useful, approachable software. Every project starts with one question: does this make something meaningfully easier?
+            NorbApp entwickelt eigene Anwendungen und digitale Lösungen, die reale Abläufe
+            einfacher machen sollen. Der Schwerpunkt liegt auf Web, Mobile, Automatisierung
+            und sinnvoll eingesetzter AI.
           </p>
           <p>
-            The studio works across web, Android and AI-assisted products, with an emphasis on clean interfaces, reliable workflows and products people can understand immediately.
+            Statt großer Versprechen zählt ein klarer Produktgedanke: schlanke Oberflächen,
+            verständliche Funktionen und kontinuierliche Weiterentwicklung.
           </p>
         </div>
       </section>
 
-      <footer className="footer shell">
-        <div className="brand"><span className="brandMark">N</span><span>NorbApp</span></div>
-        <p>© {new Date().getFullYear()} NorbApp. Built in Germany.</p>
-        <a href="mailto:hello@norbapp.com">hello@norbapp.com</a>
+      <section id="contact" className="section shell contact">
+        <div>
+          <span className="kicker">Kontakt</span>
+          <h2>Direkt erreichbar.</h2>
+          <p>
+            Fur Fragen zu NorbApp und den aktuellen Projekten erreichst du NorbApp per
+            E-Mail oder Telegram.
+          </p>
+          <div className="contactActions">
+            <a className="button primary" href="mailto:norbert@norbapp.com">norbert@norbapp.com</a>
+            <a className="button secondary" href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">@norbapp</a>
+          </div>
+        </div>
+        <div className="qrCard">
+          <Image
+            src="/telegram-qr.svg"
+            alt="Telegram QR-Code für https://t.me/norbapp"
+            width={220}
+            height={220}
+            loading="eager"
+          />
+          <strong>Auf Telegram kontaktieren</strong>
+          <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">https://t.me/norbapp</a>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <div className="shell footerGrid">
+          <div className="brand"><span className="brandMark">N</span><span>NorbApp</span></div>
+          <p>© {new Date().getFullYear()} NorbApp</p>
+          <a href="mailto:norbert@norbapp.com">norbert@norbapp.com</a>
+          <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">Telegram @norbapp</a>
+          <a href="/impressum">Impressum</a>
+          <a href="/datenschutz">Datenschutz</a>
+        </div>
       </footer>
     </main>
   );
