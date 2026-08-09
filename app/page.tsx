@@ -38,7 +38,7 @@ export default function Home() {
       <header className="siteHeader">
         <nav className="nav shell" aria-label="Hauptnavigation">
           <a className="brand" href="#top" aria-label="NorbApp Startseite">
-            <span className="brandMark">N</span>
+            <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} priority />
             <span>NorbApp</span>
           </a>
           <div className="navLinks">
@@ -67,7 +67,9 @@ export default function Home() {
             </div>
           </div>
           <div className="heroCard" aria-label="NorbApp visuelle Vorschau">
-            <div className="heroMark">N</div>
+            <div className="heroLogoFrame">
+              <Image src="/norbapp-logo.png" alt="NorbApp Logo" width={220} height={220} priority />
+            </div>
             <div>
               <span className="panelBadge">NORBAPP STUDIO</span>
               <strong>Praktisch bauen. Klar bleiben.</strong>
@@ -157,7 +159,10 @@ export default function Home() {
 
       <footer className="footer">
         <div className="shell footerGrid">
-          <div className="brand"><span className="brandMark">N</span><span>NorbApp</span></div>
+          <div className="brand">
+            <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} />
+            <span>NorbApp</span>
+          </div>
           <p>© {new Date().getFullYear()} NorbApp</p>
           <a href="mailto:norbert@norbapp.com">norbert@norbapp.com</a>
           <a href="https://t.me/norbapp" target="_blank" rel="noopener noreferrer">Telegram @norbapp</a>
