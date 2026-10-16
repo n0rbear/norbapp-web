@@ -70,7 +70,7 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
         <div className="cards">
           {t.projects.items.map((project, index) => {
-            const isKetoMentor = project.name === "KetoMentor";
+            const isKetoMentor = project.name === "Keto Mentor";
             const projectHref = isKetoMentor
               ? localizedPath(ketoMentorConfig.canonicalPath, lang)
               : null;
@@ -98,7 +98,7 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
         <div className="statusBar" aria-label={t.projects.statusLabel}>
           {t.projects.statuses.map((status) => (
-            <span className={status.includes("Test") || status.includes("Teszt") ? "activeStatus" : ""} key={status}>{status}</span>
+            <span className={(["Beta", "Béta"] as string[]).includes(status) ? "activeStatus" : ""} key={status}>{status}</span>
           ))}
         </div>
       </section>

@@ -32,7 +32,7 @@ export default async function KetoMentorPage({ searchParams }: KetoMentorProps) 
         <p>{t.ketoPage.body}</p>
         <p>{t.ketoPage.next}</p>
         {targetUrl ? (
-          <a className="button primary" href={targetUrl} target="_blank" rel="noopener noreferrer">{t.projects.openProject}</a>
+          <a className="button primary" href={targetUrl} target="_blank" rel="noopener noreferrer">{t.projects.openApp}</a>
         ) : (
           <span className="button disabledButton" aria-disabled="true">{t.ketoPage.buttonUnavailable}</span>
         )}
