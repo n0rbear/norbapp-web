@@ -252,7 +252,8 @@ h2 { margin: 10px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.04; let
 .legalCard h2 { font-size: 28px; margin-top: 30px; }
 .legalCard p, .legalCard li { color: var(--muted); }
 .legalCard a { color: var(--brand-dark); font-weight: 800; }
-.legalCard .button { margin-top: 12px; color: white; }
+.legalCard .button { margin-top: 12px; }
+.legalCard .primary { color: white; }
 .disabledButton { color: var(--muted) !important; background: #eef6f7; border: 1px solid var(--border); cursor: not-allowed; }
 
 .footer { margin-top: 64px; background: var(--surface-dark); color: white; padding: 34px 0; }
