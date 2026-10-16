@@ -11,9 +11,9 @@ const KETO_EMAIL = "ketomentor@norbapp.com";
 // Own title, description, canonical and share preview per language, so the
 // page is not read as a copy of the NorbApp home page (it inherited those).
 const SEO = {
-  de: { title: "Keto Mentor by NorbApp – Keto- und Low-Carb-Ernährungstagebuch (Beta)", description: "Mahlzeiten in eigenen Worten eintragen, Netto-Kohlenhydrate und Makros im Blick, Abendessen-Vorschläge und Wochenplan. Kostenlose offene Beta auf Deutsch, Ungarisch und Englisch.", locale: "de_DE" },
-  hu: { title: "Keto Mentor by NorbApp – keto és low carb étkezési napló (béta)", description: "Írd be saját szavaiddal, mit ettél, és látod a nettó szénhidrátot és a makrókat. Vacsoraajánló és heti étrendterv. Ingyenes nyílt béta magyarul, németül és angolul.", locale: "hu_HU" },
-  en: { title: "Keto Mentor by NorbApp – keto and low-carb food diary (beta)", description: "Log meals in your own words and see net carbs and macros, with dinner ideas and a weekly meal plan. Free open beta in English, German and Hungarian.", locale: "en_GB" }
+  de: { title: "Keto Mentor by NorbApp – Keto- und Low-Carb-Ernährungstagebuch (Beta)", description: "Mahlzeiten eintippen oder einsprechen – die KI rechnet Netto-Kohlenhydrate und Makros aus. Abendessen-Vorschläge und Wochenplan. Web-App fürs Handy, native App in Arbeit. Kostenlose offene Beta.", locale: "de_DE" },
+  hu: { title: "Keto Mentor by NorbApp – keto és low carb étkezési napló (béta)", description: "Írd be vagy mondd el, mit ettél – a mesterséges intelligencia kiszámolja a nettó szénhidrátot és a makrókat. Vacsoraajánló, heti étrendterv. Telefonra telepíthető webapp, a teljes app készül. Ingyenes nyílt béta.", locale: "hu_HU" },
+  en: { title: "Keto Mentor by NorbApp – keto and low-carb food diary (beta)", description: "Type or say what you ate – AI works out net carbs and macros. Dinner ideas and a weekly meal plan. Installable web app, full mobile app on the way. Free open beta.", locale: "en_GB" }
 } as const;
 
 export async function generateMetadata({ searchParams }: KetoMentorProps): Promise<Metadata> {

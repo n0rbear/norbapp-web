@@ -51,9 +51,9 @@ export const translations = {
         {
           name: "Keto Mentor",
           category: "Nutrition App",
-          description: "Keto Mentor by NorbApp: Mahlzeiten in eigenen Worten eintragen, Makros und Netto-Kohlenhydrate im Blick, Abendessen-Vorschläge und Wochenplan passend zu deinen Zielen.",
+          description: "Keto Mentor by NorbApp: Mahlzeiten in eigenen Worten eintippen oder einsprechen – die KI versteht sie und rechnet Netto-Kohlenhydrate und Makros aus. Dazu Abendessen-Vorschläge und Wochenplan. Web-App fürs Handy, die native App ist in Arbeit.",
           status: "Beta läuft",
-          features: ["Ernährungstagebuch", "Netto-KH & Makros", "Abendessen-Vorschlag", "Wochenplan"],
+          features: ["KI versteht Text & Sprache", "Netto-KH & Makros", "Abendessen-Vorschlag", "Wochenplan"],
         },
         {
           name: "Fuel & Route",
@@ -87,7 +87,7 @@ export const translations = {
     ketoPage: {
       title: "Keto Mentor by NorbApp – Beta",
       status: "Beta läuft",
-      body: "Keto Mentor ist in der offenen Beta: Registrierung ist für alle möglich, die App läuft im Browser und lässt sich auf dem Handy wie eine App installieren.",
+      body: "Keto Mentor ist in der offenen Beta: Registrierung ist für alle möglich. Du tippst oder sprichst, was du gegessen hast, und die KI rechnet Netto-Kohlenhydrate und Makros aus. Derzeit ist Keto Mentor eine Web-App, die sich auf dem Handy wie eine App installieren lässt; die vollständige App für Android und iOS ist in Arbeit.",
       next: "Premium-Funktionen sind während der Beta kostenlos zum Ausprobieren. Ideen und Fehler kannst du direkt in der App melden.",
       buttonUnavailable: "Test-App noch nicht öffentlich",
       back: "Zurück zu NorbApp",
@@ -139,9 +139,9 @@ export const translations = {
         {
           name: "Keto Mentor",
           category: "Nutrition App",
-          description: "Keto Mentor by NorbApp: írd be saját szavaiddal, mit ettél, kövesd a makrókat és a nettó szénhidrátot, kérj vacsoraötletet és heti étrendtervet a céljaidhoz.",
+          description: "Keto Mentor by NorbApp: írd be vagy mondd el saját szavaiddal, mit ettél – a mesterséges intelligencia megérti, és kiszámolja a nettó szénhidrátot és a makrókat. Vacsoraajánló és heti étrendterv. Telefonra telepíthető webapp, a teljes alkalmazás készül.",
           status: "Futó béta",
-          features: ["Étkezési napló", "Nettó CH és makrók", "Vacsoraajánló", "Heti étrendterv"],
+          features: ["AI érti a szöveget és a hangot", "Nettó CH és makrók", "Vacsoraajánló", "Heti étrendterv"],
         },
         {
           name: "Fuel & Route",
@@ -175,7 +175,7 @@ export const translations = {
     ketoPage: {
       title: "Keto Mentor by NorbApp – béta",
       status: "Futó béta",
-      body: "A Keto Mentor nyílt bétában fut: bárki regisztrálhat, a böngészőben működik, telefonon pedig appként telepíthető.",
+      body: "A Keto Mentor nyílt bétában fut: bárki regisztrálhat. Beírod vagy elmondod, mit ettél, és a mesterséges intelligencia kiszámolja a nettó szénhidrátot és a makrókat. Egyelőre webapp, amely telefonon alkalmazásként telepíthető; a teljes Android- és iOS-alkalmazás készül.",
       next: "A prémium funkciók a béta alatt ingyen kipróbálhatók. Ötletet és hibát közvetlenül az appban jelezhetsz.",
       buttonUnavailable: "A tesztapp még nem publikus",
       back: "Vissza a NorbApphoz",
@@ -227,9 +227,9 @@ export const translations = {
         {
           name: "Keto Mentor",
           category: "Nutrition App",
-          description: "Keto Mentor by NorbApp: log meals in your own words, track macros and net carbs, and get dinner ideas and a weekly meal plan for your targets.",
+          description: "Keto Mentor by NorbApp: type or say what you ate in your own words – AI understands it and works out net carbs and macros. Plus dinner ideas and a weekly meal plan. A web app you can install on your phone; the full mobile app is on the way.",
           status: "Beta running",
-          features: ["Food diary", "Net carbs & macros", "Dinner ideas", "Weekly meal plan"],
+          features: ["AI understands text & voice", "Net carbs & macros", "Dinner ideas", "Weekly meal plan"],
         },
         {
           name: "Fuel & Route",
@@ -263,7 +263,7 @@ export const translations = {
     ketoPage: {
       title: "Keto Mentor by NorbApp – beta",
       status: "Beta running",
-      body: "Keto Mentor is in open beta: anyone can sign up, it runs in the browser and installs like an app on your phone.",
+      body: "Keto Mentor is in open beta: anyone can sign up. Type or say what you ate and AI works out net carbs and macros. For now it is a web app that installs like an app on your phone; the full Android and iOS app is in the works.",
       next: "Premium features are free to try during the beta. You can send ideas and bug reports right in the app.",
       buttonUnavailable: "Test app is not public yet",
       back: "Back to NorbApp",
