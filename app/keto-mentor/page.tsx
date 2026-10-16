@@ -11,9 +11,9 @@ const KETO_EMAIL = "ketomentor@norbapp.com";
 // Own title, description, canonical and share preview per language, so the
 // page is not read as a copy of the NorbApp home page (it inherited those).
 const SEO = {
-  de: { title: "Keto Mentor by NorbApp – Keto- und Low-Carb-Ernährungstagebuch (Beta)", description: "Mahlzeiten eintippen oder einsprechen – die KI rechnet Netto-Kohlenhydrate und Makros aus. Abendessen-Vorschläge und Wochenplan. Web-App fürs Handy, native App in Arbeit. Kostenlose offene Beta.", locale: "de_DE" },
-  hu: { title: "Keto Mentor by NorbApp – keto és low carb étkezési napló (béta)", description: "Írd be vagy mondd el, mit ettél – a mesterséges intelligencia kiszámolja a nettó szénhidrátot és a makrókat. Vacsoraajánló, heti étrendterv. Telefonra telepíthető webapp, a teljes app készül. Ingyenes nyílt béta.", locale: "hu_HU" },
-  en: { title: "Keto Mentor by NorbApp – keto and low-carb food diary (beta)", description: "Type or say what you ate – AI works out net carbs and macros. Dinner ideas and a weekly meal plan. Installable web app, full mobile app on the way. Free open beta.", locale: "en_GB" }
+  de: { title: "Keto Mentor by NorbApp – Keto- und Low-Carb-Ernährungstagebuch (Beta)", description: "Mahlzeiten eintippen oder einsprechen – die KI rechnet Netto-Kohlenhydrate und Makros aus. Abendessen-Vorschläge und Wochenplan. Web-App fürs Handy, native App in Arbeit. Kostenlose Basisversion, Premium während der Beta gratis testen.", locale: "de_DE" },
+  hu: { title: "Keto Mentor by NorbApp – keto és low carb étkezési napló (béta)", description: "Írd be vagy mondd el, mit ettél – a mesterséges intelligencia kiszámolja a nettó szénhidrátot és a makrókat. Vacsoraajánló, heti étrendterv. Telefonra telepíthető webapp, a teljes app készül. Ingyenes alapverzió, a prémium a béta alatt ingyen kipróbálható.", locale: "hu_HU" },
+  en: { title: "Keto Mentor by NorbApp – keto and low-carb food diary (beta)", description: "Type or say what you ate – AI works out net carbs and macros. Dinner ideas and a weekly meal plan. Installable web app, full mobile app on the way. Free basic version; premium free to try during the beta.", locale: "en_GB" }
 } as const;
 
 export async function generateMetadata({ searchParams }: KetoMentorProps): Promise<Metadata> {
@@ -46,7 +46,7 @@ export default async function KetoMentorPage({ searchParams }: KetoMentorProps) 
     "@context": "https://schema.org", "@type": "WebApplication", name: "Keto Mentor by NorbApp", url: "https://ketomentor.norbapp.com/",
     applicationCategory: "HealthApplication", operatingSystem: "Web, Android, iOS (PWA)", inLanguage: ["hu", "de", "en"],
     description: SEO[lang].description, image: "https://norbapp.com/keto-mentor-og.png",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, author: { "@type": "Organization", name: "NorbApp", url: "https://norbapp.com" }
+    offers: { "@type": "Offer", name: "Basic", price: "0", priceCurrency: "EUR" }, author: { "@type": "Organization", name: "NorbApp", url: "https://norbapp.com" }
   };
 
   return (
