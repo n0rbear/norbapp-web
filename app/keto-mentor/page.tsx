@@ -1,9 +1,40 @@
+import type { Metadata } from "next";
 import Image from "next/image";
-import { contact, ketoMentorConfig, languages, localizedPath, resolveLanguage, translations } from "../i18n";
+import { ketoMentorConfig, languages, localizedPath, resolveLanguage, translations } from "../i18n";
 
 type KetoMentorProps = {
   searchParams?: Promise<{ lang?: string | string[] }>;
 };
+
+const KETO_EMAIL = "ketomentor@norbapp.com";
+
+// Own title, description, canonical and share preview per language, so the
+// page is not read as a copy of the NorbApp home page (it inherited those).
+const SEO = {
+  de: { title: "Keto Mentor by NorbApp – Keto- und Low-Carb-Ernährungstagebuch (Beta)", description: "Mahlzeiten in eigenen Worten eintragen, Netto-Kohlenhydrate und Makros im Blick, Abendessen-Vorschläge und Wochenplan. Kostenlose offene Beta auf Deutsch, Ungarisch und Englisch.", locale: "de_DE" },
+  hu: { title: "Keto Mentor by NorbApp – keto és low carb étkezési napló (béta)", description: "Írd be saját szavaiddal, mit ettél, és látod a nettó szénhidrátot és a makrókat. Vacsoraajánló és heti étrendterv. Ingyenes nyílt béta magyarul, németül és angolul.", locale: "hu_HU" },
+  en: { title: "Keto Mentor by NorbApp – keto and low-carb food diary (beta)", description: "Log meals in your own words and see net carbs and macros, with dinner ideas and a weekly meal plan. Free open beta in English, German and Hungarian.", locale: "en_GB" }
+} as const;
+
+export async function generateMetadata({ searchParams }: KetoMentorProps): Promise<Metadata> {
+  const params = await searchParams;
+  const lang = resolveLanguage(params?.lang);
+  const seo = SEO[lang];
+  const url = localizedPath(ketoMentorConfig.canonicalPath, lang);
+  return {
+    title: { absolute: seo.title },
+    description: seo.description,
+    alternates: {
+      canonical: url,
+      languages: { de: "/keto-mentor", hu: "/keto-mentor?lang=hu", en: "/keto-mentor?lang=en", "x-default": "/keto-mentor" }
+    },
+    openGraph: {
+      title: seo.title, description: seo.description, url, siteName: "NorbApp", locale: seo.locale, type: "website",
+      images: [{ url: "/keto-mentor-og.png", width: 1200, height: 630, alt: "Keto Mentor by NorbApp – Keto · Low Carb, Beta" }]
+    },
+    twitter: { card: "summary_large_image", title: seo.title, description: seo.description, images: ["/keto-mentor-og.png"] }
+  };
+}
 
 export default async function KetoMentorPage({ searchParams }: KetoMentorProps) {
   const params = await searchParams;
@@ -11,8 +42,16 @@ export default async function KetoMentorPage({ searchParams }: KetoMentorProps) 
   const t = translations[lang];
   const targetUrl = ketoMentorConfig.publicAppUrl;
 
+  const jsonLd = {
+    "@context": "https://schema.org", "@type": "WebApplication", name: "Keto Mentor by NorbApp", url: "https://ketomentor.norbapp.com/",
+    applicationCategory: "HealthApplication", operatingSystem: "Web, Android, iOS (PWA)", inLanguage: ["hu", "de", "en"],
+    description: SEO[lang].description, image: "https://norbapp.com/keto-mentor-og.png",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, author: { "@type": "Organization", name: "NorbApp", url: "https://norbapp.com" }
+  };
+
   return (
     <main className="shell legalPage">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}/>
       <div className="legalTop">
         <a className="brand" href={localizedPath("/", lang)}>
           <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} priority />
@@ -38,7 +77,7 @@ export default async function KetoMentorPage({ searchParams }: KetoMentorProps) 
         )}
         <div className="contactActions">
           <a className="button secondary" href={localizedPath("/", lang)}>{t.ketoPage.back}</a>
-          <a className="button secondary" href={`mailto:${contact.email}`}>{contact.email}</a>
+          <a className="button secondary" href={`mailto:${KETO_EMAIL}`}>{KETO_EMAIL}</a>
         </div>
       </div>
     </main>
