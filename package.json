@@ -6,7 +6,7 @@
     "prebuild": "node scripts/generate-telegram-qr.mjs",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
+    "start": "npx --yes serve@14 out -l tcp://0.0.0.0:${PORT:-3000}",
     "lint": "eslint ."
   },
   "dependencies": {

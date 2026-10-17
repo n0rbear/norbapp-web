@@ -7,8 +7,12 @@ export function resolveLanguage(value: string | string[] | undefined): Language 
   return languages.includes(candidate as Language) ? (candidate as Language) : "de";
 }
 
+export type StatusKind = "live" | "beta" | "dev";
+
+/** Static URL for a page in a language: German lives at the root, the others under /hu/ and /en/. */
 export function localizedPath(path: string, lang: Language) {
-  return lang === "de" ? path : `${path}?lang=${lang}`;
+  const clean = path === "/" ? "/" : `/${path.replace(/^\/+|\/+$/g, "")}/`;
+  return lang === "de" ? clean : `/${lang}${clean}`;
 }
 
 export const contact = {
@@ -18,13 +22,13 @@ export const contact = {
 };
 
 export const ketoMentorConfig = {
-  canonicalPath: "/keto-mentor",
+  canonicalPath: "/keto-mentor/",
   publicAppUrl: "https://ketomentor.norbapp.com" as string | null,
   proposedCanonicalUrl: "https://norbapp.com/keto-mentor",
 };
 
 export const fuelConfig = {
-  canonicalPath: "/fuel",
+  canonicalPath: "/fuel/",
   publicAppUrl: "https://fuel.norbapp.com",
 };
 
@@ -48,8 +52,8 @@ export const translations = {
       kicker: "Projekte / In Entwicklung",
       title: "Eigene Apps mit konkretem Nutzen.",
       copy: "Die Projektstruktur ist bewusst datenbasiert angelegt, damit später URLs, Screenshots, Stores, Status und Detailseiten sauber ergänzt werden können.",
-      statusLabel: "Mögliche Projektstatus",
-      statuses: ["Konzept", "In Entwicklung", "Testphase", "Beta", "Early Access", "Veröffentlicht"],
+      statusLabel: "Projektstatus",
+      statuses: { live: "Live", beta: "Beta", dev: "In Entwicklung" },
       openFuel: "Mehr zu Fuel",
       openProject: "Zur Beta",
       openApp: "Keto Mentor öffnen",
@@ -60,6 +64,7 @@ export const translations = {
           category: "Nutrition App",
           description: "Keto Mentor by NorbApp: Mahlzeiten in eigenen Worten eintippen oder einsprechen – die KI versteht sie und rechnet Netto-Kohlenhydrate und Makros aus. Dazu Abendessen-Vorschläge und Wochenplan. Web-App fürs Handy, die native App ist in Arbeit.",
           status: "Beta läuft",
+          kind: "beta" as StatusKind,
           features: ["KI versteht Text & Sprache", "Netto-KH & Makros", "Abendessen-Vorschlag", "Wochenplan"],
         },
         {
@@ -67,14 +72,16 @@ export const translations = {
           category: "Trip Cost App",
           description: "Fuel by NorbApp: Route eingeben und vor der Fahrt sehen, was sie kostet – Kraftstoff, Tankstopps, Vignetten und Maut in 30 europäischen Ländern. Kostenlos, ohne Registrierung, in allen 24 EU-Sprachen.",
           status: "Live",
+          kind: "live" as StatusKind,
           features: ["Reisekosten", "Tankstopps mit Preisen", "Maut & Vignetten"],
         },
         {
-          name: "NDP",
-          category: "Norb Diagnostic Platform",
-          description: "Entwicklerplattform für App-Diagnostik, Monitoring, Deploy-Status und technische Ereignisse.",
+          name: "Driver Assistant",
+          category: "Fahrer-App",
+          description: "Driver Assistant: Begleiter für Berufsfahrer – Touren und Stopps verwalten, Ausgaben erfassen und Tourenlisten aus PDF importieren. Android-App und Web-Oberfläche mit automatischer Synchronisierung.",
           status: "In Entwicklung",
-          features: ["App-Diagnostik", "API-Fehler", "Deploy-Monitoring"],
+          kind: "dev" as StatusKind,
+          features: ["Touren & Stopps", "Ausgaben", "PDF-Import", "Android ↔ Web Sync"],
         },
       ],
     },
@@ -120,7 +127,7 @@ export const translations = {
       privacyIntroTitle: "Kurzüberblick",
       privacyIntro: "Diese Website ist als statische Informationsseite umgesetzt. Sie enthält keine Kontaktformulare, kein Analytics, kein Tracking, keine Marketing-Cookies und keine eingebetteten Inhalte von Drittanbietern.",
       hostingTitle: "Hosting und Serverlogs",
-      hosting: "Die Website wird über Render bereitgestellt. Beim Aufruf einer Website können technisch notwendige Zugriffsdaten entstehen, zum Beispiel IP-Adresse, Datum und Uhrzeit des Abrufs, angefragte URL, Browserinformationen und technische Statusdaten.",
+      hosting: "Die Website wird über GitHub Pages (GitHub Inc.) bereitgestellt. Beim Aufruf einer Website können technisch notwendige Zugriffsdaten entstehen, zum Beispiel IP-Adresse, Datum und Uhrzeit des Abrufs, angefragte URL, Browserinformationen und technische Statusdaten.",
       cookiesTitle: "Cookies, Local Storage und Tracking",
       cookies: "Die Website setzt nach aktuellem Stand keine Cookies, nutzt keinen localStorage oder sessionStorage und lädt keine Analyse- oder Marketing-Skripte. Deshalb wird kein Cookie-Consent-Banner angezeigt.",
       assetsTitle: "Schriftarten und Assets",
@@ -149,8 +156,8 @@ export const translations = {
       kicker: "Projektek / Fejlesztés alatt",
       title: "Saját appok konkrét haszonnal.",
       copy: "A projektadatok központi modellben vannak, így később biztonságosan hozzáadható URL, screenshot, store-link, státusz és részletes projektoldal.",
-      statusLabel: "Lehetséges projektstátuszok",
-      statuses: ["Koncepció", "Fejlesztés alatt", "Tesztfázis", "Béta", "Early Access", "Megjelent"],
+      statusLabel: "Projektstátusz",
+      statuses: { live: "Élesben", beta: "Béta", dev: "Fejlesztés alatt" },
       openFuel: "Bővebben a Fuelről",
       openProject: "Irány a béta",
       openApp: "Keto Mentor megnyitása",
@@ -161,6 +168,7 @@ export const translations = {
           category: "Nutrition App",
           description: "Keto Mentor by NorbApp: írd be vagy mondd el saját szavaiddal, mit ettél – a mesterséges intelligencia megérti, és kiszámolja a nettó szénhidrátot és a makrókat. Vacsoraajánló és heti étrendterv. Telefonra telepíthető webapp, a teljes alkalmazás készül.",
           status: "Futó béta",
+          kind: "beta" as StatusKind,
           features: ["AI érti a szöveget és a hangot", "Nettó CH és makrók", "Vacsoraajánló", "Heti étrendterv"],
         },
         {
@@ -168,14 +176,16 @@ export const translations = {
           category: "Trip Cost App",
           description: "Fuel by NorbApp: add meg az útvonalat, és indulás előtt látod, mennyibe kerül – üzemanyag, tankolások, matricák és útdíjak 30 európai országban. Ingyenes, regisztráció nélkül, mind a 24 uniós nyelven.",
           status: "Élesben",
+          kind: "live" as StatusKind,
           features: ["Útiköltség", "Tankolás árakkal", "Útdíj és matrica"],
         },
         {
-          name: "NDP",
-          category: "Norb Diagnostic Platform",
-          description: "Fejlesztői platform appdiagnosztikához, monitoringhoz, deploy állapothoz és technikai eseményekhez.",
+          name: "Driver Assistant",
+          category: "Sofőr app",
+          description: "Driver Assistant: segítő app hivatásos sofőröknek – túrák és megállók kezelése, költségek rögzítése, túralisták importálása PDF-ből. Androidos app és webes felület automatikus szinkronizálással.",
           status: "Fejlesztés alatt",
-          features: ["Appdiagnosztika", "API hibák", "Deploy monitoring"],
+          kind: "dev" as StatusKind,
+          features: ["Túrák és megállók", "Költségek", "PDF import", "Android ↔ web szinkron"],
         },
       ],
     },
@@ -221,7 +231,7 @@ export const translations = {
       privacyIntroTitle: "Rövid áttekintés",
       privacyIntro: "Ez a webhely statikus információs oldal. Nincs kapcsolatfelvételi űrlap, analytics, tracking, marketing cookie vagy beágyazott harmadik feles tartalom.",
       hostingTitle: "Hosting és szerverlogok",
-      hosting: "A webhely Renderen fut. Betöltéskor technikailag szükséges hozzáférési adatok keletkezhetnek, például IP-cím, időpont, lekért URL, böngészőinformáció és technikai státuszadat.",
+      hosting: "A webhelyet a GitHub Pages (GitHub Inc.) szolgáltatja ki. Betöltéskor technikailag szükséges hozzáférési adatok keletkezhetnek, például IP-cím, időpont, lekért URL, böngészőinformáció és technikai státuszadat.",
       cookiesTitle: "Cookie-k, localStorage és tracking",
       cookies: "A webhely jelenleg nem állít be cookie-t, nem használ localStorage-ot vagy sessionStorage-ot, és nem tölt be analytics vagy marketing scriptet. Ezért nincs cookie banner.",
       assetsTitle: "Betűkészletek és assetek",
@@ -250,8 +260,8 @@ export const translations = {
       kicker: "Projects / In Development",
       title: "Own apps with concrete utility.",
       copy: "Project data is centralized so URLs, screenshots, store links, statuses and detail pages can be added safely later.",
-      statusLabel: "Possible project statuses",
-      statuses: ["Concept", "In Development", "Test Phase", "Beta", "Early Access", "Released"],
+      statusLabel: "Project status",
+      statuses: { live: "Live", beta: "Beta", dev: "In development" },
       openFuel: "More about Fuel",
       openProject: "Go to the beta",
       openApp: "Open Keto Mentor",
@@ -262,6 +272,7 @@ export const translations = {
           category: "Nutrition App",
           description: "Keto Mentor by NorbApp: type or say what you ate in your own words – AI understands it and works out net carbs and macros. Plus dinner ideas and a weekly meal plan. A web app you can install on your phone; the full mobile app is on the way.",
           status: "Beta running",
+          kind: "beta" as StatusKind,
           features: ["AI understands text & voice", "Net carbs & macros", "Dinner ideas", "Weekly meal plan"],
         },
         {
@@ -269,14 +280,16 @@ export const translations = {
           category: "Trip Cost App",
           description: "Fuel by NorbApp: enter a route and see what it costs before you leave – fuel, refuelling stops, vignettes and tolls in 30 European countries. Free, no sign-up, in all 24 EU languages.",
           status: "Live",
+          kind: "live" as StatusKind,
           features: ["Trip costs", "Fuel stops with prices", "Tolls & vignettes"],
         },
         {
-          name: "NDP",
-          category: "Norb Diagnostic Platform",
-          description: "Developer platform for app diagnostics, monitoring, deploy status and technical events.",
-          status: "In Development",
-          features: ["App diagnostics", "API errors", "Deploy monitoring"],
+          name: "Driver Assistant",
+          category: "Driver App",
+          description: "Driver Assistant: a companion for professional drivers – manage tours and stops, log expenses and import tour lists from PDF. Android app and web interface with automatic sync.",
+          status: "In development",
+          kind: "dev" as StatusKind,
+          features: ["Tours & stops", "Expenses", "PDF import", "Android ↔ web sync"],
         },
       ],
     },
@@ -322,7 +335,7 @@ export const translations = {
       privacyIntroTitle: "Overview",
       privacyIntro: "This website is implemented as a static information site. It has no contact form, analytics, tracking, marketing cookies or embedded third-party content.",
       hostingTitle: "Hosting and server logs",
-      hosting: "The website is hosted on Render. When a website is accessed, technically necessary access data may be created, such as IP address, access time, requested URL, browser information and technical status data.",
+      hosting: "The website is hosted on GitHub Pages (GitHub Inc.). When a website is accessed, technically necessary access data may be created, such as IP address, access time, requested URL, browser information and technical status data.",
       cookiesTitle: "Cookies, localStorage and tracking",
       cookies: "The website currently sets no cookies, uses no localStorage or sessionStorage, and loads no analytics or marketing scripts. No cookie banner is shown.",
       assetsTitle: "Fonts and assets",

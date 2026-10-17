@@ -1,35 +1,27 @@
 import Image from "next/image";
-import { contact, fuelConfig, ketoMentorConfig, languages, localizedPath, resolveLanguage, translations } from "./i18n";
+import { contact, fuelConfig, ketoMentorConfig, localizedPath, translations, type Language, type StatusKind } from "../i18n";
+import { LanguageSwitch, StatusPill } from "./site";
 
-type HomeProps = {
-  searchParams?: Promise<{ lang?: string | string[] }>;
-};
+const legendOrder: StatusKind[] = ["live", "beta", "dev"];
 
-export default async function Home({ searchParams }: HomeProps) {
-  const params = await searchParams;
-  const lang = resolveLanguage(params?.lang);
+export default function HomeView({ lang }: { lang: Language }) {
   const t = translations[lang];
+  const home = localizedPath("/", lang);
 
   return (
     <main>
       <header className="siteHeader">
         <nav className="nav shell" aria-label="Main navigation">
-          <a className="brand" href={`/?lang=${lang}#top`} aria-label="NorbApp">
+          <a className="brand" href={`${home}#top`} aria-label="NorbApp">
             <Image className="brandLogo" src="/norbapp-logo.png" alt="" width={44} height={44} priority />
             <span>NorbApp</span>
           </a>
           <div className="navLinks">
-            <a href={`/?lang=${lang}#projects`}>{t.nav.projects}</a>
-            <a href={`/?lang=${lang}#about`}>{t.nav.about}</a>
-            <a href={`/?lang=${lang}#contact`}>{t.nav.contact}</a>
+            <a href={`${home}#projects`}>{t.nav.projects}</a>
+            <a href={`${home}#about`}>{t.nav.about}</a>
+            <a href={`${home}#contact`}>{t.nav.contact}</a>
           </div>
-          <div className="languageSwitch" aria-label="Language switcher">
-            {languages.map((item) => (
-              <a className={item === lang ? "activeLanguage" : ""} href={localizedPath("/", item)} key={item} hrefLang={item}>
-                {item.toUpperCase()}
-              </a>
-            ))}
-          </div>
+          <LanguageSwitch lang={lang} path="/" />
         </nav>
       </header>
 
@@ -44,8 +36,8 @@ export default async function Home({ searchParams }: HomeProps) {
             <p className="heroCopy">{t.hero.copy}</p>
             <a className="heroNews" href={localizedPath(fuelConfig.canonicalPath, lang)}>{t.hero.news} →</a>
             <div className="heroActions">
-              <a className="button primary" href={`/?lang=${lang}#projects`}>{t.hero.projectsCta}</a>
-              <a className="button secondary" href={`/?lang=${lang}#contact`}>{t.hero.contactCta}</a>
+              <a className="button primary" href={`${home}#projects`}>{t.hero.projectsCta}</a>
+              <a className="button secondary" href={`${home}#contact`}>{t.hero.contactCta}</a>
             </div>
           </div>
           <div className="heroCard" aria-label="NorbApp visual preview">
@@ -69,6 +61,11 @@ export default async function Home({ searchParams }: HomeProps) {
           </div>
           <p>{t.projects.copy}</p>
         </div>
+        <div className="statusBar" aria-label={t.projects.statusLabel}>
+          {legendOrder.map((kind) => (
+            <StatusPill key={kind} kind={kind} label={t.projects.statuses[kind]} />
+          ))}
+        </div>
         <div className="cards">
           {t.projects.items.map((project, index) => {
             const isKetoMentor = project.name === "Keto Mentor";
@@ -83,10 +80,10 @@ export default async function Home({ searchParams }: HomeProps) {
               : ketoMentorConfig.publicAppUrl ? t.projects.openProject : t.projects.unavailable;
 
             return (
-              <article className="card" key={project.name}>
+              <article className={`card card--${project.kind}`} key={project.name}>
                 <div className="cardTop">
                   <span className="appIcon">{project.name[0]}</span>
-                  <span className="status"><span />{project.status}</span>
+                  <StatusPill kind={project.kind} label={project.status} />
                 </div>
                 <p className="cardIndex">0{index + 1} / {project.category}</p>
                 <h3>{project.name}</h3>
@@ -102,11 +99,6 @@ export default async function Home({ searchParams }: HomeProps) {
               </article>
             );
           })}
-        </div>
-        <div className="statusBar" aria-label={t.projects.statusLabel}>
-          {t.projects.statuses.map((status) => (
-            <span className={(["Beta", "Béta"] as string[]).includes(status) ? "activeStatus" : ""} key={status}>{status}</span>
-          ))}
         </div>
       </section>
 
