@@ -125,6 +125,8 @@ h1 span {
   color: transparent;
 }
 .heroCopy { font-size: 18px; color: var(--muted); max-width: 680px; }
+.heroNews { display: inline-block; margin: -4px 0 22px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: rgba(255,255,255,.7); color: var(--brand-dark); font-size: 14px; font-weight: 700; text-decoration: none; transition: border-color .2s ease; }
+.heroNews:hover { border-color: var(--brand); }
 .heroActions, .contactActions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 .button {
   border-radius: 14px;
@@ -254,6 +256,8 @@ h2 { margin: 10px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.04; let
 .legalCard a { color: var(--brand-dark); font-weight: 800; }
 .legalCard .button { margin-top: 12px; }
 .legalCard .primary { color: white; }
+.status.live span { background: var(--brand); box-shadow: 0 0 0 5px rgba(4,174,176,.14); }
+.fuelFeedback { margin-top: 18px; font-size: 15px; }
 .disabledButton { color: var(--muted) !important; background: #eef6f7; border: 1px solid var(--border); cursor: not-allowed; }
 
 .footer { margin-top: 64px; background: var(--surface-dark); color: white; padding: 34px 0; }

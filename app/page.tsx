@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { contact, ketoMentorConfig, languages, localizedPath, resolveLanguage, translations } from "./i18n";
+import { contact, fuelConfig, ketoMentorConfig, languages, localizedPath, resolveLanguage, translations } from "./i18n";
 
 type HomeProps = {
   searchParams?: Promise<{ lang?: string | string[] }>;
@@ -42,6 +42,7 @@ export default async function Home({ searchParams }: HomeProps) {
               <span>{t.hero.subtitle}</span>
             </h1>
             <p className="heroCopy">{t.hero.copy}</p>
+            <a className="heroNews" href={localizedPath(fuelConfig.canonicalPath, lang)}>{t.hero.news} →</a>
             <div className="heroActions">
               <a className="button primary" href={`/?lang=${lang}#projects`}>{t.hero.projectsCta}</a>
               <a className="button secondary" href={`/?lang=${lang}#contact`}>{t.hero.contactCta}</a>
@@ -71,9 +72,15 @@ export default async function Home({ searchParams }: HomeProps) {
         <div className="cards">
           {t.projects.items.map((project, index) => {
             const isKetoMentor = project.name === "Keto Mentor";
+            const isFuel = project.name === "Fuel by NorbApp";
             const projectHref = isKetoMentor
               ? localizedPath(ketoMentorConfig.canonicalPath, lang)
-              : null;
+              : isFuel
+                ? localizedPath(fuelConfig.canonicalPath, lang)
+                : null;
+            const linkLabel = isFuel
+              ? t.projects.openFuel
+              : ketoMentorConfig.publicAppUrl ? t.projects.openProject : t.projects.unavailable;
 
             return (
               <article className="card" key={project.name}>
@@ -89,7 +96,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 </ul>
                 {projectHref ? (
                   <a className="projectLink" href={projectHref}>
-                    {ketoMentorConfig.publicAppUrl ? t.projects.openProject : t.projects.unavailable}
+                    {linkLabel}
                   </a>
                 ) : null}
               </article>
