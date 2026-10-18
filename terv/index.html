@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="hu" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Személyes Munkaterület & Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(75, 85, 99, 0.5);
+        }
+        /* Touch safety for canvas drawing */
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-full flex flex-col transition-colors duration-200">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-80 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-gray-200 dark:border-gray-700">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 mb-3">
+                    <i class="fa-solid fa-square-poll-vertical text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Munkaterület Belépés</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Jelentkezz be a folytatáshoz</p>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Felhasználónév</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="login-username" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Jelszó</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="login-password" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Belépés
+                </button>
+            </form>
+
+            <div id="login-error" class="hidden mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs rounded-lg text-center"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION CONTAINER -->
+    <div id="app-container" class="hidden flex-col h-screen overflow-hidden">
+
+        <!-- HEADER NAVBAR -->
+        <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-sm z-20">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-border-all text-2xl text-blue-600 dark:text-blue-400"></i>
+                <h1 class="text-xl font-bold tracking-tight text-gray-800 dark:text-white hidden sm:block">Munkaterület Dashboard</h1>
+            </div>
+
+            <!-- Active User Display & Toolbar Actions -->
+            <div class="flex items-center gap-3">
+                <!-- User Profile Badge -->
+                <div id="current-user-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                    <div id="user-avatar" class="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold uppercase shadow-sm"></div>
+                    <span id="user-display-name" class="text-sm font-semibold text-gray-700 dark:text-gray-200"></span>
+                </div>
+
+                <!-- User Management Button -->
+                <button onclick="toggleUserModal(true)" title="Felhasználók kezelése" class="p-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fa-solid fa-users"></i>
+                </button>
+
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleDarkMode()" title="Sötét / Világos mód" class="p-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i id="dark-mode-icon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <!-- Data Backup / Restore -->
+                <button onclick="exportData()" title="Adatok Exportálása (JSON)" class="p-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fa-solid fa-download"></i>
+                </button>
+                <button onclick="document.getElementById('import-file-input').click()" title="Adatok Importálása (JSON)" class="p-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fa-solid fa-upload"></i>
+                </button>
+                <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importData(event)">
+
+                <!-- Logout -->
+                <button onclick="logout()" title="Kijelentkezés" class="p-2.5 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- DYNAMIC TABS NAVIGATION BAR -->
+        <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 pt-2 flex items-center justify-between overflow-x-auto">
+            <div id="tabs-header-container" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <!-- Tab Buttons rendered here -->
+            </div>
+            <button onclick="openNewTabModal()" class="mb-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shrink-0 shadow-sm transition">
+                <i class="fa-solid fa-plus"></i> Új fül
+            </button>
+        </div>
+
+        <!-- TAB CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-900">
+            <div id="active-tab-content" class="max-w-7xl mx-auto space-y-6">
+                <!-- Dynamic Modules rendered here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: ADD NEW TAB -->
+    <div id="tab-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-900 bg-opacity-60 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-md border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Új fül hozzáadása</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Fül neve</label>
+                    <input type="text" id="modal-tab-name" placeholder="pl. Projekt Alfa" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Ikon választás</label>
+                    <select id="modal-tab-icon" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="fa-folder">Mappa</option>
+                        <option value="fa-briefcase">Munkamenet</option>
+                        <option value="fa-chart-line">Projektek</option>
+                        <option value="fa-pencil">Rajztábla</option>
+                        <option value="fa-bookmark">Könyvjelzők</option>
+                        <option value="fa-database">Adatbázis</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button onclick="closeNewTabModal()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Mégse</button>
+                    <button onclick="createNewTab()" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold">Létrehozás</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: USER MANAGEMENT -->
+    <div id="user-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-gray-900 bg-opacity-60 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-lg border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Felhasználók Kezelése</h3>
+                <button onclick="toggleUserModal(false)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- Existing Users List -->
+            <div class="mb-6 overflow-y-auto max-h-48 space-y-2 border-b border-gray-200 dark:border-gray-700 pb-4" id="users-list-container">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Add New User Form -->
+            <form onsubmit="handleCreateUser(event)" class="space-y-3">
+                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Új felhasználó regisztrációja</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Felhasználónév</label>
+                        <input type="text" id="new-username" required class="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Jelszó</label>
+                        <input type="password" id="new-password" required class="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Felhasználói Szín</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" id="new-user-color" value="#3b82f6" class="w-10 h-10 rounded cursor-pointer border-0">
+                        <span class="text-xs text-gray-500">Ez a szín azonosítja majd a bejegyzéseidet!</span>
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold transition">
+                    Új Felhasználó Hozzáadása
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: IMAGE PREVIEW -->
+    <div id="image-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-80 p-4" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-[90vh]">
+            <img id="image-modal-src" src="" alt="Nagyított kép" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain">
+            <button class="absolute top-2 right-2 text-white bg-gray-900 bg-opacity-60 rounded-full p-2 hover:bg-opacity-90"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* -------------------------------------------------------------------------- */
+        /* GLOBAL STATE & INITIALIZATION                                              */
+        /* -------------------------------------------------------------------------- */
+        const DEFAULT_USERS = [
+            { id: 'usr_1', username: 'admin', password: '123', name: 'Adminisztrátor', color: '#0284c7' },
+            { id: 'usr_2', username: 'eva', password: '123', name: 'Éva', color: '#ec4899' },
+            { id: 'usr_3', username: 'gabor', password: '123', name: 'Gábor', color: '#10b981' }
+        ];
+
+        const DEFAULT_TABS = [
+            {
+                id: 'tab_default_1',
+                name: 'Áttekintés & Rajztábla',
+                icon: 'fa-briefcase',
+                notes: [
+                    { id: 'n1', title: 'Üdvözöljük a Dashboardon!', content: 'Ez egy többfelhasználós munkaterület. Próbáld ki a rajztáblát, jegyzeteket és a táblázatkezelőt!', authorId: 'usr_1', createdAt: new Date().toISOString() }
+                ],
+                table: {
+                    headers: ['Feladat', 'Felelős', 'Státusz', 'Határidő'],
+                    rows: [
+                        { id: 'r1', authorId: 'usr_1', data: ['Projekt megtervezése', 'Adminisztrátor', 'Kész', '2026-10-20'] },
+                        { id: 'r2', authorId: 'usr_2', data: ['Rajzvászon tesztelése', 'Éva', 'Folyamatban', '2026-10-22'] }
+                    ]
+                },
+                links: [
+                    { id: 'l1', title: 'Google Search', url: 'https://google.com', category: 'Kereső', authorId: 'usr_1' }
+                ],
+                images: [],
+                drawings: []
+            }
+        ];
+
+        let state = {
+            users: [],
+            currentUser: null,
+            tabs: [],
+            activeTabId: null,
+            darkMode: false
+        };
+
+        // Whiteboard / Drawing state
+        let drawingState = {
+            isDrawing: false,
+            color: '#000000',
+            size: 4,
+            isEraser: false,
+            history: [],
+            canvas: null,
+            ctx: null
+        };
+
+        window.onload = function() {
+            loadStorage();
+            initDarkMode();
+            checkSession();
+        };
+
+        /* -------------------------------------------------------------------------- */
+        /* STORAGE MANAGEMENT                                                          */
+        /* -------------------------------------------------------------------------- */
+        function loadStorage() {
+            const savedUsers = localStorage.getItem('dashboard_users');
+            state.users = savedUsers ? JSON.parse(savedUsers) : DEFAULT_USERS;
+
+            const savedTabs = localStorage.getItem('dashboard_tabs');
+            state.tabs = savedTabs ? JSON.parse(savedTabs) : DEFAULT_TABS;
+
+            state.activeTabId = state.tabs[0]?.id || null;
+            state.darkMode = localStorage.getItem('dashboard_theme') === 'dark';
+        }
+
+        function saveStorage() {
+            localStorage.setItem('dashboard_users', JSON.stringify(state.users));
+            localStorage.setItem('dashboard_tabs', JSON.stringify(state.tabs));
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* AUTHENTICATION                                                             */
+        /* -------------------------------------------------------------------------- */
+        function checkSession() {
+            const activeUserId = localStorage.getItem('dashboard_session');
+            if (activeUserId) {
+                const user = state.users.find(u => u.id === activeUserId);
+                if (user) {
+                    state.currentUser = user;
+                    showApp();
+                    return;
+                }
+            }
+            showLogin();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const uname = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            const errBox = document.getElementById('login-error');
+
+            const user = state.users.find(u => u.username.toLowerCase() === uname.toLowerCase() && u.password === pass);
+            if (user) {
+                state.currentUser = user;
+                localStorage.setItem('dashboard_session', user.id);
+                errBox.classList.add('hidden');
+                showApp();
+            } else {
+                errBox.innerText = 'Érvénytelen felhasználónév vagy jelszó!';
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('dashboard_session');
+            state.currentUser = null;
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('flex');
+        }
+
+        function showApp() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('flex');
+
+            updateUserBadge();
+            renderTabsHeader();
+            renderActiveTabContent();
+        }
+
+        function updateUserBadge() {
+            const badge = document.getElementById('user-avatar');
+            const nameSpan = document.getElementById('user-display-name');
+            if (state.currentUser) {
+                badge.style.backgroundColor = state.currentUser.color || '#3b82f6';
+                badge.innerText = state.currentUser.username.substring(0, 2).toUpperCase();
+                nameSpan.innerText = state.currentUser.name || state.currentUser.username;
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* USER MANAGEMENT MODAL                                                      */
+        /* -------------------------------------------------------------------------- */
+        function toggleUserModal(show) {
+            const modal = document.getElementById('user-modal');
+            if (show) {
+                renderUsersList();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderUsersList() {
+            const container = document.getElementById('users-list-container');
+            container.innerHTML = state.users.map(u => `
+                <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600">
+                    <div class="flex items-center gap-3">
+                        <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background-color: ${u.color}">
+                            ${u.username.substring(0,2).toUpperCase()}
+                        </div>
+                        <span class="text-sm font-medium text-gray-800 dark:text-gray-200">${u.name || u.username} (@${u.username})</span>
+                    </div>
+                    ${state.users.length > 1 ? `
+                        <button onclick="deleteUser('${u.id}')" class="text-red-500 hover:text-red-700 text-xs p-1" title="Törlés">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function handleCreateUser(e) {
+            e.preventDefault();
+            const uname = document.getElementById('new-username').value.trim();
+            const pass = document.getElementById('new-password').value.trim();
+            const color = document.getElementById('new-user-color').value;
+
+            if (state.users.some(u => u.username.toLowerCase() === uname.toLowerCase())) {
+                alert('Ez a felhasználónév már létezik!');
+                return;
+            }
+
+            const newUser = {
+                id: 'usr_' + Date.now(),
+                username: uname,
+                password: pass,
+                name: uname,
+                color: color
+            };
+
+            state.users.push(newUser);
+            saveStorage();
+            renderUsersList();
+
+            document.getElementById('new-username').value = '';
+            document.getElementById('new-password').value = '';
+        }
+
+        function deleteUser(id) {
+            if (state.users.length <= 1) {
+                alert('Az utolsó felhasználó nem törölhető!');
+                return;
+            }
+            if (confirm('Biztosan törölni szeretnéd ezt a felhasználót?')) {
+                state.users = state.users.filter(u => u.id !== id);
+                saveStorage();
+                renderUsersList();
+                if (state.currentUser && state.currentUser.id === id) {
+                    logout();
+                }
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* DARK MODE                                                                  */
+        /* -------------------------------------------------------------------------- */
+        function initDarkMode() {
+            if (state.darkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('dark-mode-icon').className = 'fa-solid fa-sun';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('dark-mode-icon').className = 'fa-solid fa-moon';
+            }
+        }
+
+        function toggleDarkMode() {
+            state.darkMode = !state.darkMode;
+            localStorage.setItem('dashboard_theme', state.darkMode ? 'dark' : 'light');
+            initDarkMode();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* TABS MANAGEMENT                                                            */
+        /* -------------------------------------------------------------------------- */
+        function renderTabsHeader() {
+            const container = document.getElementById('tabs-header-container');
+            container.innerHTML = state.tabs.map(tab => {
+                const isActive = tab.id === state.activeTabId;
+                return `
+                    <div class="flex items-center rounded-t-lg transition border-b-2 ${
+                        isActive 
+                        ? 'bg-blue-50 dark:bg-gray-700 text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 font-semibold' 
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 border-transparent'
+                    }">
+                        <button onclick="setActiveTab('${tab.id}')" class="px-3 py-2 flex items-center gap-2 text-sm outline-none">
+                            <i class="fa-solid ${tab.icon || 'fa-folder'}"></i>
+                            <span>${tab.name}</span>
+                        </button>
+                        ${state.tabs.length > 1 ? `
+                            <button onclick="deleteTab('${tab.id}')" class="pr-2 pl-1 text-xs text-gray-400 hover:text-red-500 transition">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setActiveTab(id) {
+            state.activeTabId = id;
+            renderTabsHeader();
+            renderActiveTabContent();
+        }
+
+        function openNewTabModal() {
+            document.getElementById('tab-modal').classList.remove('hidden');
+        }
+
+        function closeNewTabModal() {
+            document.getElementById('tab-modal').classList.add('hidden');
+        }
+
+        function createNewTab() {
+            const name = document.getElementById('modal-tab-name').value.trim() || 'Új Fül';
+            const icon = document.getElementById('modal-tab-icon').value;
+
+            const newTab = {
+                id: 'tab_' + Date.now(),
+                name: name,
+                icon: icon,
+                notes: [],
+                table: { headers: ['Oszlop 1', 'Oszlop 2', 'Oszlop 3'], rows: [] },
+                links: [],
+                images: [],
+                drawings: []
+            };
+
+            state.tabs.push(newTab);
+            state.activeTabId = newTab.id;
+            saveStorage();
+            closeNewTabModal();
+            renderTabsHeader();
+            renderActiveTabContent();
+            document.getElementById('modal-tab-name').value = '';
+        }
+
+        function deleteTab(id) {
+            if (state.tabs.length <= 1) return;
+            if (confirm('Biztosan törölni szeretnéd ezt a fület a teljes tartalmával együtt?')) {
+                state.tabs = state.tabs.filter(t => t.id !== id);
+                if (state.activeTabId === id) {
+                    state.activeTabId = state.tabs[0].id;
+                }
+                saveStorage();
+                renderTabsHeader();
+                renderActiveTabContent();
+            }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* ACTIVE TAB RENDERING & MODULES                                             */
+        /* -------------------------------------------------------------------------- */
+        function getActiveTab() {
+            return state.tabs.find(t => t.id === state.activeTabId);
+        }
+
+        function getUserById(userId) {
+            return state.users.find(u => u.id === userId) || { name: 'Ismeretlen', color: '#9ca3af' };
+        }
+
+        function renderActiveTabContent() {
+            const tab = getActiveTab();
+            const container = document.getElementById('active-tab-content');
+            if (!tab) {
+                container.innerHTML = '<p class="text-center text-gray-500">Nincs kijelölt fül.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <!-- WHITEBOARD / CANVAS MODULE -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-paintbrush text-blue-600 dark:text-blue-400 text-lg"></i>
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white">Interaktív Rajztábla (Whiteboard)</h2>
+                        </div>
+                        
+                        <!-- Drawing Tools Controls -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <input type="color" id="brush-color" value="#000000" onchange="setBrushColor(this.value)" class="w-8 h-8 rounded cursor-pointer border-0">
+                            
+                            <select onchange="setBrushSize(this.value)" class="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                                <option value="2">Vékony ecset</option>
+                                <option value="5" selected>Közepes ecset</option>
+                                <option value="12">Vastag ecset</option>
+                            </select>
+
+                            <button id="eraser-btn" onclick="toggleEraser()" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-1">
+                                <i class="fa-solid fa-eraser"></i> Radír
+                            </button>
+
+                            <button onclick="undoCanvas()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+
+                            <button onclick="clearCanvas()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 flex items-center gap-1">
+                                <i class="fa-solid fa-trash-can"></i> Törlés
+                            </button>
+
+                            <button onclick="saveDrawing()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-600 hover:bg-green-700 text-white flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-floppy-disk"></i> Mentés Képként
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Container -->
+                    <div class="relative w-full bg-white rounded-xl border border-gray-300 dark:border-gray-600 overflow-hidden shadow-inner h-72 sm:h-96">
+                        <canvas id="whiteboard-canvas" class="w-full h-full cursor-crosshair"></canvas>
+                    </div>
+
+                    <!-- Saved Drawings Gallery -->
+                    <div class="mt-4">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Mentett Rajzok Ennél a Fólnél</h4>
+                        <div id="drawings-gallery" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            ${renderDrawingsList(tab)}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTES MODULE -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-note-sticky text-amber-500 text-lg"></i>
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white">Jegyzettömb</h2>
+                        </div>
+                        <button onclick="addNote()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Új Jegyzet
+                        </button>
+                    </div>
+
+                    <div id="notes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${renderNotes(tab)}
+                    </div>
+                </div>
+
+                <!-- TABLE MODULE -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-table text-emerald-600 dark:text-emerald-400 text-lg"></i>
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white">Adattáblázat</h2>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="addTableColumn()" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-semibold">
+                                + Oszlop
+                            </button>
+                            <button onclick="addTableRow()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold">
+                                + Sor
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-xl">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                                    <th class="p-2 w-10 text-center text-xs font-semibold text-gray-400">#</th>
+                                    ${tab.table.headers.map((h, i) => `
+                                        <th class="p-2 border-r border-gray-200 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-300">
+                                            <div class="flex items-center justify-between gap-1">
+                                                <input type="text" value="${escapeHtml(h)}" onchange="updateTableHeader(${i}, this.value)" class="bg-transparent font-semibold w-full focus:bg-white dark:focus:bg-gray-600 rounded px-1 outline-none">
+                                                <button onclick="deleteTableColumn(${i})" class="text-gray-400 hover:text-red-500 text-xs px-1"><i class="fa-solid fa-xmark"></i></button>
+                                            </div>
+                                        </th>
+                                    `).join('')}
+                                    <th class="p-2 w-24 text-center font-semibold text-gray-500">Szerző</th>
+                                    <th class="p-2 w-10 text-center font-semibold text-gray-500"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${renderTableRows(tab)}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- LINKS & GALLERY GRID -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- BOOKMARKS / LINKS -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-link text-indigo-500 text-lg"></i>
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-white">Könyvjelzők & Linkek</h2>
+                            </div>
+                            <button onclick="addLink()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> Új Link
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            ${renderLinks(tab)}
+                        </div>
+                    </div>
+
+                    <!-- IMAGE GALLERY & DRAG DROP -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-image text-purple-500 text-lg"></i>
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-white">Képgaléria</h2>
+                            </div>
+                        </div>
+
+                        <!-- Drop Zone -->
+                        <div ondragover="event.preventDefault()" ondrop="handleImageDrop(event)" onclick="document.getElementById('image-upload-input').click()" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 text-center hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition mb-4">
+                            <i class="fa-solid fa-cloud-arrow-up text-2xl text-gray-400 mb-1"></i>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Húzz ide képeket vagy kattints a feltöltéshez</p>
+                            <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            ${renderImageGallery(tab)}
+                        </div>
+                    </div>
+
+                </div>
+            `;
+
+            // Initialize canvas event listeners after DOM insertion
+            setTimeout(initCanvas, 50);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* DRAWING / WHITEBOARD LOGIC                                                 */
+        /* -------------------------------------------------------------------------- */
+        function initCanvas() {
+            const canvas = document.getElementById('whiteboard-canvas');
+            if (!canvas) return;
+
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            drawingState.canvas = canvas;
+            drawingState.ctx = ctx;
+            saveCanvasState();
+
+            // Pointer Events (Touch, Stylus, Mouse unified)
+            canvas.addEventListener('pointerdown', startDrawing);
+            canvas.addEventListener('pointermove', draw);
+            canvas.addEventListener('pointerup', stopDrawing);
+            canvas.addEventListener('pointerleave', stopDrawing);
+        }
+
+        function getCanvasCoordinates(e) {
+            const rect = drawingState.canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            drawingState.isDrawing = true;
+            const coords = getCanvasCoordinates(e);
+            drawingState.ctx.beginPath();
+            drawingState.ctx.moveTo(coords.x, coords.y);
+        }
+
+        function draw(e) {
+            if (!drawingState.isDrawing) return;
+            const coords = getCanvasCoordinates(e);
+            
+            const ctx = drawingState.ctx;
+            ctx.lineWidth = drawingState.size;
+            
+            if (drawingState.isEraser) {
+                ctx.strokeStyle = '#ffffff';
+            } else {
+                ctx.strokeStyle = drawingState.color;
+            }
+
+            ctx.lineTo(coords.x, coords.y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            if (drawingState.isDrawing) {
+                drawingState.isDrawing = false;
+                saveCanvasState();
+            }
+        }
+
+        function saveCanvasState() {
+            if (!drawingState.canvas) return;
+            if (drawingState.history.length > 15) drawingState.history.shift();
+            drawingState.history.push(drawingState.canvas.toDataURL());
+        }
+
+        function setBrushColor(color) {
+            drawingState.color = color;
+            drawingState.isEraser = false;
+            document.getElementById('eraser-btn').classList.remove('bg-blue-100', 'dark:bg-blue-900');
+        }
+
+        function setBrushSize(size) {
+            drawingState.size = size;
+        }
+
+        function toggleEraser() {
+            drawingState.isEraser = !drawingState.isEraser;
+            const btn = document.getElementById('eraser-btn');
+            if (drawingState.isEraser) {
+                btn.classList.add('bg-blue-100', 'dark:bg-blue-900');
+            } else {
+                btn.classList.remove('bg-blue-100', 'dark:bg-blue-900');
+            }
+        }
+
+        function clearCanvas() {
+            if (!drawingState.ctx) return;
+            drawingState.ctx.clearRect(0, 0, drawingState.canvas.width, drawingState.canvas.height);
+            saveCanvasState();
+        }
+
+        function undoCanvas() {
+            if (drawingState.history.length > 1) {
+                drawingState.history.pop();
+                const lastState = drawingState.history[drawingState.history.length - 1];
+                const img = new Image();
+                img.onload = function() {
+                    drawingState.ctx.clearRect(0, 0, drawingState.canvas.width, drawingState.canvas.height);
+                    drawingState.ctx.drawImage(img, 0, 0);
+                };
+                img.src = lastState;
+            }
+        }
+
+        function saveDrawing() {
+            const dataUrl = drawingState.canvas.toDataURL();
+            const tab = getActiveTab();
+            if (!tab) return;
+
+            const drawingItem = {
+                id: 'draw_' + Date.now(),
+                dataUrl: dataUrl,
+                authorId: state.currentUser.id,
+                createdAt: new Date().toISOString()
+            };
+
+            if (!tab.drawings) tab.drawings = [];
+            tab.drawings.unshift(drawingItem);
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function renderDrawingsList(tab) {
+            if (!tab.drawings || tab.drawings.length === 0) {
+                return '<p class="col-span-full text-xs text-gray-400 py-2">Még nincsenek mentett rajzok.</p>';
+            }
+
+            return tab.drawings.map(d => {
+                const author = getUserById(d.authorId);
+                return `
+                    <div class="relative group rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                        <img src="${d.dataUrl}" alt="Rajz" class="w-full h-24 object-contain p-1 cursor-pointer" onclick="openImageModal('${d.dataUrl}')">
+                        <div class="absolute bottom-1 right-1 flex items-center gap-1">
+                            <span class="w-3 h-3 rounded-full border border-white" style="background-color: ${author.color}" title="${author.name}"></span>
+                        </div>
+                        <button onclick="deleteDrawing('${d.id}')" class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-red-600 text-white rounded-full p-1 text-xs transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteDrawing(id) {
+            const tab = getActiveTab();
+            if (!tab) return;
+            tab.drawings = tab.drawings.filter(d => d.id !== id);
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* NOTES MODULE                                                               */
+        /* -------------------------------------------------------------------------- */
+        function renderNotes(tab) {
+            if (!tab.notes || tab.notes.length === 0) {
+                return '<p class="col-span-full text-gray-400 text-sm py-4">Nincsenek jegyzetek. Hozz létre egyet!</p>';
+            }
+
+            return tab.notes.map(note => {
+                const author = getUserById(note.authorId);
+                return `
+                    <div class="p-4 rounded-xl border bg-gray-50 dark:bg-gray-700/40 relative flex flex-col justify-between transition hover:shadow-md" style="border-left: 5px solid ${author.color}">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <input type="text" value="${escapeHtml(note.title)}" onchange="updateNote('${note.id}', 'title', this.value)" class="font-bold text-gray-800 dark:text-white bg-transparent outline-none w-full mr-2">
+                                <button onclick="deleteNote('${note.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <textarea onchange="updateNote('${note.id}', 'content', this.value)" class="w-full bg-transparent text-xs text-gray-600 dark:text-gray-300 outline-none resize-none h-24">${escapeHtml(note.content)}</textarea>
+                        </div>
+                        <div class="flex items-center justify-between mt-3 pt-2 border-t border-gray-200 dark:border-gray-600 text-xs">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${author.color}"></span>
+                                <span class="text-gray-500 dark:text-gray-400 font-medium">${author.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addNote() {
+            const tab = getActiveTab();
+            if (!tab) return;
+            tab.notes.unshift({
+                id: 'note_' + Date.now(),
+                title: 'Új Jegyzet',
+                content: 'Írd ide a jegyzet tartalmát...',
+                authorId: state.currentUser.id,
+                createdAt: new Date().toISOString()
+            });
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function updateNote(id, key, val) {
+            const tab = getActiveTab();
+            const note = tab.notes.find(n => n.id === id);
+            if (note) {
+                note[key] = val;
+                note.authorId = state.currentUser.id; // Update author on edit
+                saveStorage();
+            }
+        }
+
+        function deleteNote(id) {
+            const tab = getActiveTab();
+            tab.notes = tab.notes.filter(n => n.id !== id);
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* TABLE MODULE                                                               */
+        /* -------------------------------------------------------------------------- */
+        function renderTableRows(tab) {
+            if (!tab.table.rows || tab.table.rows.length === 0) {
+                return `<tr><td colspan="${tab.table.headers.length + 3}" class="p-4 text-center text-gray-400 text-xs">A táblázat üres.</td></tr>`;
+            }
+
+            return tab.table.rows.map(row => {
+                const author = getUserById(row.authorId);
+                return `
+                    <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/30">
+                        <td class="p-2 text-center text-xs text-gray-400">
+                            <span class="w-2 h-2 rounded-full inline-block" style="background-color: ${author.color}"></span>
+                        </td>
+                        ${tab.table.headers.map((_, colIndex) => `
+                            <td class="p-2 border-r border-gray-200 dark:border-gray-700">
+                                <input type="text" value="${escapeHtml(row.data[colIndex] || '')}" onchange="updateTableCell('${row.id}', ${colIndex}, this.value)" class="w-full bg-transparent outline-none text-xs text-gray-800 dark:text-gray-200 focus:bg-white dark:focus:bg-gray-600 rounded px-1">
+                            </td>
+                        `).join('')}
+                        <td class="p-2 text-center text-xs font-medium text-gray-500">${author.name}</td>
+                        <td class="p-2 text-center">
+                            <button onclick="deleteTableRow('${row.id}')" class="text-gray-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateTableHeader(index, value) {
+            const tab = getActiveTab();
+            tab.table.headers[index] = value;
+            saveStorage();
+        }
+
+        function updateTableCell(rowId, colIndex, value) {
+            const tab = getActiveTab();
+            const row = tab.table.rows.find(r => r.id === rowId);
+            if (row) {
+                row.data[colIndex] = value;
+                row.authorId = state.currentUser.id;
+                saveStorage();
+            }
+        }
+
+        function addTableRow() {
+            const tab = getActiveTab();
+            const emptyData = new Array(tab.table.headers.length).fill('');
+            tab.table.rows.push({
+                id: 'row_' + Date.now(),
+                authorId: state.currentUser.id,
+                data: emptyData
+            });
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function deleteTableRow(rowId) {
+            const tab = getActiveTab();
+            tab.table.rows = tab.table.rows.filter(r => r.id !== rowId);
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function addTableColumn() {
+            const tab = getActiveTab();
+            tab.table.headers.push('Új oszlop');
+            tab.table.rows.forEach(r => r.data.push(''));
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function deleteTableColumn(index) {
+            const tab = getActiveTab();
+            if (tab.table.headers.length <= 1) return;
+            tab.table.headers.splice(index, 1);
+            tab.table.rows.forEach(r => r.data.splice(index, 1));
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* LINKS & BOOKMARKS MODULE                                                   */
+        /* -------------------------------------------------------------------------- */
+        function renderLinks(tab) {
+            if (!tab.links || tab.links.length === 0) {
+                return '<p class="text-xs text-gray-400 py-2">Nincsenek mentett linkek.</p>';
+            }
+
+            return tab.links.map(link => {
+                const author = getUserById(link.authorId);
+                return `
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600">
+                        <div class="flex items-center gap-2 overflow-hidden pr-2">
+                            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${author.color}"></span>
+                            <a href="${link.url}" target="_blank" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline truncate">${escapeHtml(link.title || link.url)}</a>
+                        </div>
+                        <button onclick="deleteLink('${link.id}')" class="text-gray-400 hover:text-red-500 text-xs shrink-0"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addLink() {
+            const url = prompt('Add meg az URL címet:');
+            if (!url) return;
+            const title = prompt('Add meg a hivatkozás címét:') || url;
+
+            const tab = getActiveTab();
+            tab.links.push({
+                id: 'link_' + Date.now(),
+                url: url.startsWith('http') ? url : 'https://' + url,
+                title: title,
+                authorId: state.currentUser.id
+            });
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function deleteLink(id) {
+            const tab = getActiveTab();
+            tab.links = tab.links.filter(l => l.id !== id);
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* GALLERY & IMAGE UPLOAD MODULE                                              */
+        /* -------------------------------------------------------------------------- */
+        function renderImageGallery(tab) {
+            if (!tab.images || tab.images.length === 0) {
+                return '<p class="col-span-full text-xs text-gray-400 py-2">Nincsenek feltöltött képek.</p>';
+            }
+
+            return tab.images.map(img => {
+                const author = getUserById(img.authorId);
+                return `
+                    <div class="relative group rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 h-24 bg-black">
+                        <img src="${img.dataUrl}" alt="Kép" class="w-full h-full object-cover cursor-pointer" onclick="openImageModal('${img.dataUrl}')">
+                        <div class="absolute bottom-1 right-1">
+                            <span class="w-3 h-3 rounded-full inline-block border border-white" style="background-color: ${author.color}"></span>
+                        </div>
+                        <button onclick="deleteImage('${img.id}')" class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-red-600 text-white rounded-full p-1 text-xs transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) processImageFile(file);
+        }
+
+        function handleImageDrop(e) {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) processImageFile(file);
+        }
+
+        function processImageFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const tab = getActiveTab();
+                if (!tab.images) tab.images = [];
+                tab.images.unshift({
+                    id: 'img_' + Date.now(),
+                    dataUrl: evt.target.result,
+                    authorId: state.currentUser.id
+                });
+                saveStorage();
+                renderActiveTabContent();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteImage(id) {
+            const tab = getActiveTab();
+            tab.images = tab.images.filter(i => i.id !== id);
+            saveStorage();
+            renderActiveTabContent();
+        }
+
+        function openImageModal(src) {
+            document.getElementById('image-modal-src').src = src;
+            document.getElementById('image-modal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* IMPORT / EXPORT DATA                                                       */
+        /* -------------------------------------------------------------------------- */
+        function exportData() {
+            const exportPayload = {
+                users: state.users,
+                tabs: state.tabs,
+                exportedAt: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `munkaterulet_backup_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    if (data.users && data.tabs) {
+                        state.users = data.users;
+                        state.tabs = data.tabs;
+                        state.activeTabId = state.tabs[0]?.id || null;
+                        saveStorage();
+                        alert('Sikeres adatimportálás!');
+                        location.reload();
+                    } else {
+                        alert('Érvénytelen JSON struktúra!');
+                    }
+                } catch (err) {
+                    alert('Hiba történt a JSON fájl beolvasása közben!');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* UTILS                                                                      */
+        /* -------------------------------------------------------------------------- */
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
