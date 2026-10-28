@@ -39,7 +39,11 @@ export function ImpressumView({ lang }: { lang: Language }) {
       <h1>{t.legal.impressumTitle}</h1>
       <div className="legalCard">
         <h2>{t.legal.approvedData}</h2>
-        <p><strong>NorbApp</strong></p>
+        <p>
+          <strong>{lang === "hu" ? "Horváth Norbert" : "Norbert Horváth"}</strong> (NorbApp)<br />
+          An der Steige 27/1<br />
+          78713 Schramberg, {lang === "hu" ? "Németország" : lang === "de" ? "Deutschland" : "Germany"}
+        </p>
         <p>
           E-mail: <a href={`mailto:${contact.email}`}>{contact.email}</a><br />
           Telegram: <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramLabel}</a>
