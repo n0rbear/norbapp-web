@@ -4,9 +4,9 @@ import { contact, fuelConfig, localizedPath, translations, type Language } from 
 import { alternatesFor, LanguageSwitch, ogLocaleFor, StatusPill } from "./site";
 
 const SEO = {
-  de: { title: "Fuel by NorbApp – Reisekostenrechner für Europa: Sprit, Tankstopps, Maut", description: "Route eingeben und vor der Fahrt sehen, was sie kostet: Kraftstoff, Tankstopps mit Tankstellenpreisen, Vignetten und Maut in 27 EU-Ländern sowie der Schweiz, Liechtenstein und Monaco. Kostenlos, ohne Registrierung." },
-  hu: { title: "Fuel by NorbApp – útiköltség-kalkulátor Európához: üzemanyag, tankolás, útdíj", description: "Add meg az útvonalat, és indulás előtt látod, mennyibe kerül: üzemanyag, tankolások kútárakkal, matricák és útdíjak a 27 uniós országban, valamint Svájcban, Liechtensteinben és Monacóban. Ingyenes, regisztráció nélkül." },
-  en: { title: "Fuel by NorbApp – European trip cost calculator: fuel, stops, tolls", description: "Enter a route and see what it costs before you leave: fuel, refuelling stops with station prices, vignettes and tolls in the 27 EU countries plus Switzerland, Liechtenstein and Monaco. Free, no sign-up." },
+  de: { title: "Fuel by NorbApp – Reisekostenrechner für Europa: Sprit, Tankstopps, Maut", description: "Route eingeben und vor der Fahrt sehen, was sie kostet: Kraftstoff, Tankstopps mit Tankstellenpreisen, Vignetten und Maut in 36 europäischen Ländern – EU, Schweiz, Westbalkan und Türkei. Kostenlos, ohne Registrierung." },
+  hu: { title: "Fuel by NorbApp – útiköltség-kalkulátor Európához: üzemanyag, tankolás, útdíj", description: "Add meg az útvonalat, és indulás előtt látod, mennyibe kerül: üzemanyag, tankolások kútárakkal, matricák és útdíjak 36 európai országban – EU, Svájc, Nyugat-Balkán és Törökország. Ingyenes, regisztráció nélkül." },
+  en: { title: "Fuel by NorbApp – European trip cost calculator: fuel, stops, tolls", description: "Enter a route and see what it costs before you leave: fuel, refuelling stops with station prices, vignettes and tolls in 36 European countries – the EU, Switzerland, the Western Balkans and Turkey. Free, no sign-up." },
 } as const;
 
 export function fuelMetadata(lang: Language): Metadata {
