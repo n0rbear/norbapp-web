@@ -58,6 +58,9 @@ export function DatenschutzView({ lang }: { lang: Language }) {
       <LegalTop lang={lang} path="/datenschutz" />
       <h1>{t.legal.privacyTitle}</h1>
       <div className="legalCard">
+        <h2>{t.legal.controllerTitle}</h2>
+        <p>{t.legal.controller}</p>
+
         <h2>{t.legal.privacyIntroTitle}</h2>
         <p>{t.legal.privacyIntro}</p>
 
@@ -75,6 +78,15 @@ export function DatenschutzView({ lang }: { lang: Language }) {
           {t.legal.externalContact}{" "}
           <a href={contact.telegramUrl} target="_blank" rel="noopener noreferrer">{contact.telegramUrl}</a>
         </p>
+
+        <h2>{t.legal.rightsTitle}</h2>
+        <p>{t.legal.rights}</p>
+
+        <h2>{t.legal.objectTitle}</h2>
+        <p>{t.legal.object}</p>
+
+        <h2>{t.legal.otherTitle}</h2>
+        <p>{t.legal.other}</p>
 
         <h2>{t.legal.contactTitle}</h2>
         <p>
